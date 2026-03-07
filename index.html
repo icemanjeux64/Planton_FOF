@@ -574,6 +574,7 @@
 
 <body>
     <script>
+        // L'URL de ton script Google Apps
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby97xRyQK-MWPIbjjaHMWXnyE-LpMHKReV2Tq2pWkhNNaJiqToE_dja-YbfEqXhx8Ql/exec";
     </script>
 
@@ -670,11 +671,19 @@
                 <!-- ===== TAB: ACCUEIL ===== -->
                 <div id="tab-accueil" class="tab-pane">
 
-                    <!-- Recrue identity -->
-                    <div class="sec-head"><i class="fa-solid fa-user-plus"></i>Identité Recrue</div>
-                    <div class="mb-4">
-                        <input type="text" id="recrueNom" placeholder="Pseudo exact en jeu" title="Nom de la recrue"
-                            class="ops-input uppercase">
+                    <!-- NOUVEAU : Identité Recrue ET Formateur -->
+                    <div class="sec-head"><i class="fa-solid fa-user-plus"></i>Identité & Formation</div>
+                    <div class="mb-4 flex flex-col gap-3">
+                        <input type="text" id="recrueNom" placeholder="Pseudo exact de la recrue"
+                            title="Nom de la recrue" class="ops-input uppercase">
+
+                        <div class="relative">
+                            <input type="text" id="formateurNom" placeholder="Pseudo du formateur (Planton)"
+                                title="Nom du formateur" class="ops-input uppercase"
+                                style="border-color: rgba(0,255,157,0.3)">
+                            <span class="mono absolute right-2 top-2"
+                                style="font-size:9px; color:rgba(0,255,157,0.5); pointer-events: none;">FORMATEUR</span>
+                        </div>
                     </div>
 
                     <!-- Global progress -->
@@ -978,7 +987,7 @@
 
         <div class="text-center">
             <span class="mono" style="font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.1)">
-                <i class="fa-solid fa-lock mr-1"></i>EXTERNAL OPS — FOF v2.1
+                <i class="fa-solid fa-lock mr-1"></i>EXTERNAL OPS — FOF v2.2
             </span>
         </div>
 
@@ -987,8 +996,24 @@
     <script>
         let currentPseudo = "";
 
+        // ─── INITIALISATION (Vérif de session active) ────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedSession = localStorage.getItem('fof_planton_session');
+            if (savedSession) {
+                currentPseudo = savedSession;
+                // Met à jour l'affichage
+                document.getElementById('displayPseudo').innerText = currentPseudo;
+                document.getElementById('formateurNom').value = currentPseudo; // Auto-remplissage du formateur
+
+                // Bascule directement sur l'interface principale
+                document.getElementById('loginView').classList.add('hidden');
+                document.getElementById('mainView').classList.remove('hidden');
+            }
+        });
+
         // ─── API ─────────────────────────────────────────────────────
         async function callAPI(action, payload = {}) {
+            // Optionnel : ne pas afficher le loader pour le login si on veut que ce soit instantané
             document.getElementById('loader').style.display = 'flex';
             try {
                 const r = await fetch(SCRIPT_URL, {
@@ -1061,19 +1086,34 @@
             if (!pseudo) return;
             try {
                 currentPseudo = pseudo;
-                const res = await callAPI('login');
-                if (res) {
-                    document.getElementById('displayPseudo').innerText = currentPseudo;
-                    document.getElementById('loginView').classList.add('hidden');
-                    document.getElementById('mainView').classList.remove('hidden');
-                    showToast("✓ SESSION — " + currentPseudo, "ok");
-                }
-            } catch (e) { currentPseudo = ""; }
+
+                // Appel API optionnel (si tu valides via Google Sheet)
+                // const res = await callAPI('login'); 
+
+                // Sauvegarde de la session dans le navigateur
+                localStorage.setItem('fof_planton_session', currentPseudo);
+
+                // Maj UI
+                document.getElementById('displayPseudo').innerText = currentPseudo;
+                document.getElementById('formateurNom').value = currentPseudo; // Auto-remplissage
+                document.getElementById('loginView').classList.add('hidden');
+                document.getElementById('mainView').classList.remove('hidden');
+
+                showToast("✓ SESSION — " + currentPseudo, "ok");
+            } catch (e) {
+                currentPseudo = "";
+            }
         }
 
         // ─── LOGOUT ──────────────────────────────────────────────────
         async function handleLogout() {
-            try { await callAPI('logout'); } finally { location.reload(); }
+            try {
+                // await callAPI('logout'); // Si besoin d'avertir Google Sheet
+            } finally {
+                // On vide le stockage et on recharge
+                localStorage.removeItem('fof_planton_session');
+                location.reload();
+            }
         }
 
         // ─── COUNTER ─────────────────────────────────────────────────
@@ -1094,6 +1134,10 @@
         // ─── RECRUTEMENT ─────────────────────────────────────────────
         async function sendRecrutement() {
             const joueur = document.getElementById('recrueNom').value.trim().toUpperCase();
+
+            // On récupère le formateur. S'il a effacé la case, on met le pseudo connecté par défaut.
+            const formateur = document.getElementById('formateurNom').value.trim().toUpperCase() || currentPseudo;
+
             if (!joueur) {
                 showToast("⚠ PSEUDO RECRUE REQUIS", "err");
                 document.getElementById('recrueNom').focus();
@@ -1121,13 +1165,16 @@
             notes = `[Accueil: ${totalChecked}/${totalItems} points] ` + notes;
 
             try {
+                // On envoie le recruteur (celui qui a fait la saisie) et le formateur
                 await callAPI('recrutement', {
-                    payload: { joueur, recruteur: currentPseudo, reglement, explications, notes }
+                    payload: { joueur, recruteur: currentPseudo, formateur: formateur, reglement, explications, notes }
                 });
                 showToast("✓ DOSSIER ARCHIVÉ — " + joueur, "ok");
-                // Reset
+
+                // Reset du formulaire
                 document.getElementById('recrueNom').value = "";
                 document.getElementById('recrueNotes').value = "";
+                document.getElementById('formateurNom').value = currentPseudo; // On remet le formateur par défaut
                 document.querySelectorAll('.chk-wrap').forEach(c => c.checked = false);
                 updateProgress();
             } catch (e) { }
