@@ -574,7 +574,7 @@
 
 <body>
     <script>
-        // L'URL de ton script Google Apps
+        // L'URL de ton script Google Apps (Ne pas oublier de refaire un déploiement et de remplacer cette URL si besoin)
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby97xRyQK-MWPIbjjaHMWXnyE-LpMHKReV2Tq2pWkhNNaJiqToE_dja-YbfEqXhx8Ql/exec";
     </script>
 
@@ -611,7 +611,7 @@
                 class="ops-input mono uppercase text-center text-lg tracking-widest mb-6"
                 onkeydown="if(event.key==='Enter')handleLogin()">
             <button onclick="handleLogin()" class="btn-primary w-full" style="padding:14px">
-                <i class="fa-solid fa-satellite-dish mr-2"></i>Initialiser Session
+                <i class="fa-solid fa-satellite-dish mr-2"></i>Prise de Service
             </button>
         </div>
         <p class="mono mt-4" style="font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,.12)">CANAL SÉCURISÉ —
@@ -634,7 +634,8 @@
                         style="font-size:17px;color:var(--cyan)">---</div>
                 </div>
             </div>
-            <button onclick="handleLogout()" class="btn-danger"><i class="fa-solid fa-power-off mr-1"></i>Déco.</button>
+            <button onclick="handleLogout()" class="btn-danger"><i class="fa-solid fa-power-off mr-1"></i>Fin de
+                Service</button>
         </div>
 
         <!-- Tabs -->
@@ -671,7 +672,6 @@
                 <!-- ===== TAB: ACCUEIL ===== -->
                 <div id="tab-accueil" class="tab-pane">
 
-                    <!-- NOUVEAU : Identité Recrue ET Formateur -->
                     <div class="sec-head"><i class="fa-solid fa-user-plus"></i>Identité & Formation</div>
                     <div class="mb-4 flex flex-col gap-3">
                         <input type="text" id="recrueNom" placeholder="Pseudo exact de la recrue"
@@ -987,7 +987,7 @@
 
         <div class="text-center">
             <span class="mono" style="font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.1)">
-                <i class="fa-solid fa-lock mr-1"></i>EXTERNAL OPS — FOF v2.2
+                <i class="fa-solid fa-lock mr-1"></i>EXTERNAL OPS — FOF v2.3
             </span>
         </div>
 
@@ -996,24 +996,8 @@
     <script>
         let currentPseudo = "";
 
-        // ─── INITIALISATION (Vérif de session active) ────────────────
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedSession = localStorage.getItem('fof_planton_session');
-            if (savedSession) {
-                currentPseudo = savedSession;
-                // Met à jour l'affichage
-                document.getElementById('displayPseudo').innerText = currentPseudo;
-                document.getElementById('formateurNom').value = currentPseudo; // Auto-remplissage du formateur
-
-                // Bascule directement sur l'interface principale
-                document.getElementById('loginView').classList.add('hidden');
-                document.getElementById('mainView').classList.remove('hidden');
-            }
-        });
-
         // ─── API ─────────────────────────────────────────────────────
         async function callAPI(action, payload = {}) {
-            // Optionnel : ne pas afficher le loader pour le login si on veut que ce soit instantané
             document.getElementById('loader').style.display = 'flex';
             try {
                 const r = await fetch(SCRIPT_URL, {
@@ -1024,7 +1008,7 @@
                 });
                 const res = await r.json();
                 if (res.status === "error") throw new Error(res.message);
-                return res;
+                return res.data; // On retourne juste la payload .data renvoyée par le backend
             } catch (e) {
                 showToast("ERREUR : " + e.message, "err");
                 throw e;
@@ -1032,6 +1016,31 @@
                 document.getElementById('loader').style.display = 'none';
             }
         }
+
+        // ─── INITIALISATION (Vérif globale depuis le serveur) ────────
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Au chargement, on demande au Google Sheet s'il y a déjà une session ouverte
+            try {
+                const session = await callAPI('checkSession');
+
+                if (session && session.actif) {
+                    currentPseudo = session.pseudo;
+
+                    // Met à jour l'affichage
+                    document.getElementById('displayPseudo').innerText = currentPseudo;
+                    document.getElementById('formateurNom').value = currentPseudo;
+
+                    // Bascule directement sur l'interface principale
+                    document.getElementById('loginView').classList.add('hidden');
+                    document.getElementById('mainView').classList.remove('hidden');
+
+                    showToast("✓ SESSION RÉCUPÉRÉE — " + currentPseudo, "ok");
+                }
+            } catch (e) {
+                // S'il y a une erreur ou personne connecté, on reste sur l'écran de login normalement.
+                console.log("Aucune session active ou erreur de réseau");
+            }
+        });
 
         // ─── TOAST ───────────────────────────────────────────────────
         let toastTimer;
@@ -1087,19 +1096,16 @@
             try {
                 currentPseudo = pseudo;
 
-                // Appel API optionnel (si tu valides via Google Sheet)
-                // const res = await callAPI('login'); 
-
-                // Sauvegarde de la session dans le navigateur
-                localStorage.setItem('fof_planton_session', currentPseudo);
+                // Appel API obligatoire maintenant
+                await callAPI('login');
 
                 // Maj UI
                 document.getElementById('displayPseudo').innerText = currentPseudo;
-                document.getElementById('formateurNom').value = currentPseudo; // Auto-remplissage
+                document.getElementById('formateurNom').value = currentPseudo;
                 document.getElementById('loginView').classList.add('hidden');
                 document.getElementById('mainView').classList.remove('hidden');
 
-                showToast("✓ SESSION — " + currentPseudo, "ok");
+                showToast("✓ PRISE DE SERVICE — " + currentPseudo, "ok");
             } catch (e) {
                 currentPseudo = "";
             }
@@ -1108,10 +1114,8 @@
         // ─── LOGOUT ──────────────────────────────────────────────────
         async function handleLogout() {
             try {
-                // await callAPI('logout'); // Si besoin d'avertir Google Sheet
+                await callAPI('logout'); // Dit au backend de fermer la session
             } finally {
-                // On vide le stockage et on recharge
-                localStorage.removeItem('fof_planton_session');
                 location.reload();
             }
         }
@@ -1134,8 +1138,6 @@
         // ─── RECRUTEMENT ─────────────────────────────────────────────
         async function sendRecrutement() {
             const joueur = document.getElementById('recrueNom').value.trim().toUpperCase();
-
-            // On récupère le formateur. S'il a effacé la case, on met le pseudo connecté par défaut.
             const formateur = document.getElementById('formateurNom').value.trim().toUpperCase() || currentPseudo;
 
             if (!joueur) {
@@ -1144,7 +1146,6 @@
                 return;
             }
 
-            // Collecte des items non cochés pour inclusion dans les notes
             const nonChecked = [];
             sections.forEach(s => {
                 s.ids.forEach(id => {
@@ -1165,16 +1166,14 @@
             notes = `[Accueil: ${totalChecked}/${totalItems} points] ` + notes;
 
             try {
-                // On envoie le recruteur (celui qui a fait la saisie) et le formateur
                 await callAPI('recrutement', {
                     payload: { joueur, recruteur: currentPseudo, formateur: formateur, reglement, explications, notes }
                 });
                 showToast("✓ DOSSIER ARCHIVÉ — " + joueur, "ok");
 
-                // Reset du formulaire
                 document.getElementById('recrueNom').value = "";
                 document.getElementById('recrueNotes').value = "";
-                document.getElementById('formateurNom').value = currentPseudo; // On remet le formateur par défaut
+                document.getElementById('formateurNom').value = currentPseudo;
                 document.querySelectorAll('.chk-wrap').forEach(c => c.checked = false);
                 updateProgress();
             } catch (e) { }
