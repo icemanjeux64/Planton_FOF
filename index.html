@@ -8,104 +8,211 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap');
 
         :root {
-            --cyan: #00e5ff;
-            --cyan-dim: rgba(0, 229, 255, 0.12);
-            --cyan-glow: rgba(0, 229, 255, 0.35);
-            --bg: #05070a;
-            --surface: #0c111a;
-            --surface2: #111827;
-            --border: rgba(0, 229, 255, 0.15);
-            --text: #c9d1d9;
-            --red: #ff4d6d;
-            --green: #00ff9d;
-            --amber: #f59e0b;
+            --cyan: #00f2ff;
+            --cyan-dim: rgba(0, 242, 255, 0.4);
+            --cyan-glow: rgba(0, 242, 255, 0.15);
+            --bg-dark: #05080a;
+            --accent-red: #ff3e3e;
+            --accent-yellow: #facc15;
+            --accent-green: #22c55e;
+            --base-font-size: 11px;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        @keyframes pulse-cyan {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px var(--cyan-glow);
+            }
+
+            50% {
+                box-shadow: 0 0 25px var(--cyan-glow);
+            }
+        }
+
+        @keyframes spin-slow {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* ----- Global ----- */
+        html,
+        body {
+            height: 100% !important;
+            height: 100dvh !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            background-color: var(--bg-dark);
         }
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
-            font-family: 'Rajdhani', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            background-image: radial-gradient(ellipse at 15% 50%, rgba(0, 229, 255, 0.025) 0%, transparent 55%);
+            font-family: 'Inter', sans-serif;
+            color: var(--cyan);
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(ellipse at 15% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
         }
 
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
         }
 
-        /* ----- Panel ----- */
-        .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            position: relative;
+        /* SCANLINES */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 1000;
         }
 
-        .panel::before {
-            content: '';
+        .scanlines::after {
+            content: "";
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--cyan), transparent 70%);
-            opacity: 0.6;
+            height: 20px;
+            background: rgba(0, 242, 255, 0.05);
+            animation: scan 8s linear infinite;
+            pointer-events: none;
+        }
+
+        /* ----- Containers ----- */
+        .hud-container {
+            animation: pulse-cyan 10s ease-in-out infinite;
+            height: 100%;
+            height: 100dvh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            flex: 1;
+            padding: clamp(0.25rem, 1vw, 0.75rem);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: rgba(15, 23, 42, 0.4);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+        }
+
+        /* ----- Panel ----- */
+        .panel {
+            background: linear-gradient(145deg, rgba(8, 15, 20, 0.9) 0%, rgba(5, 10, 15, 0.95) 100%);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 1px 1px rgba(0, 242, 255, 0.1);
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+            padding: 1rem;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(0, 242, 255, 0) 0%, rgba(0, 242, 255, 0.4) 50%, rgba(0, 242, 255, 0) 100%);
         }
 
         .corner {
             position: absolute;
-            width: 8px;
-            height: 8px;
+            width: 12px;
+            height: 12px;
+            border-color: var(--cyan);
+            pointer-events: none;
         }
 
         .corner.tl {
-            top: -1px;
-            left: -1px;
-            border-top: 2px solid var(--cyan);
-            border-left: 2px solid var(--cyan);
+            top: 0;
+            left: 0;
+            border-top: 2px solid;
+            border-left: 2px solid;
         }
 
         .corner.br {
-            bottom: -1px;
-            right: -1px;
-            border-bottom: 2px solid var(--cyan);
-            border-right: 2px solid var(--cyan);
+            bottom: 0;
+            right: 0;
+            border-bottom: 2px solid;
+            border-right: 2px solid;
         }
 
         /* ----- Section heading ----- */
         .sec-head {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            font-weight: 900;
             letter-spacing: .2em;
             text-transform: uppercase;
-            color: rgba(0, 229, 255, .5);
+            color: var(--cyan);
+            opacity: 0.7;
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 14px;
+            gap: 10px;
+            margin-bottom: 1rem;
         }
 
         .sec-head::after {
             content: '';
             flex: 1;
             height: 1px;
-            background: linear-gradient(90deg, rgba(0, 229, 255, .18), transparent);
+            background: linear-gradient(90deg, var(--cyan-dim), transparent);
         }
 
         /* ----- Accordion ----- */
         .accordion {
-            border: 1px solid rgba(0, 229, 255, .1);
-            border-radius: 3px;
+            border: 1px solid rgba(0, 242, 255, .1);
+            background: rgba(0, 0, 0, .2);
+            border-radius: 4px;
             overflow: hidden;
             margin-bottom: 8px;
+            transition: all 0.3s ease;
         }
 
         .accordion-header {
@@ -113,69 +220,44 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px 16px;
-            background: rgba(0, 0, 0, .3);
+            background: rgba(0, 242, 255, .03);
             cursor: pointer;
             user-select: none;
-            transition: background .2s;
+            transition: all .2s;
         }
 
         .accordion-header:hover {
-            background: rgba(0, 229, 255, .05);
+            background: rgba(0, 242, 255, .08);
         }
 
         .accordion-header .title {
-            font-size: 14px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
             font-weight: 700;
             letter-spacing: .06em;
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .accordion-header .title i {
-            width: 16px;
-            text-align: center;
-            color: rgba(0, 229, 255, .6);
-            font-size: 13px;
-        }
-
-        .accordion-header .badge {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 99px;
-            background: rgba(0, 0, 0, .4);
-            border: 1px solid rgba(255, 255, 255, .08);
-            color: rgba(255, 255, 255, .35);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .accordion-header .badge.done {
-            border-color: rgba(0, 255, 157, .4);
-            color: var(--green);
-            background: rgba(0, 255, 157, .06);
+            color: white;
         }
 
         .accordion-header .chevron {
-            color: rgba(255, 255, 255, .3);
+            color: var(--cyan);
+            opacity: 0.5;
             transition: transform .3s;
-            font-size: 11px;
-        }
-
-        .accordion-body {
-            display: none;
-            padding: 14px 16px;
-            border-top: 1px solid rgba(255, 255, 255, .04);
-        }
-
-        .accordion.open .accordion-body {
-            display: block;
         }
 
         .accordion.open .chevron {
             transform: rotate(180deg);
+        }
+
+        .accordion-body {
+            display: none;
+            padding: 1rem;
+        }
+
+        .accordion.open .accordion-body {
+            display: block;
         }
 
         /* ----- Check items ----- */
@@ -187,69 +269,64 @@
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            padding: 9px 10px;
-            border-radius: 3px;
+            padding: 10px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: background .15s;
-            margin-bottom: 6px;
-        }
-
-        .chk-label:last-child {
-            margin-bottom: 0;
+            transition: all .15s;
+            margin-bottom: 4px;
+            border: 1px solid transparent;
         }
 
         .chk-label:hover {
-            background: rgba(0, 229, 255, .04);
+            background: rgba(0, 242, 255, .05);
+            border-color: rgba(0, 242, 255, 0.1);
         }
 
         .chk-box {
             width: 18px;
             height: 18px;
             flex-shrink: 0;
-            border: 1.5px solid rgba(0, 229, 255, .25);
-            border-radius: 2px;
+            border: 2px solid rgba(0, 242, 255, .3);
+            border-radius: 3px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: 1px;
+            margin-top: 2px;
             transition: all .2s;
         }
 
         .chk-wrap:checked+.chk-label {
-            background: rgba(0, 255, 157, .04);
+            background: rgba(0, 255, 157, .03);
         }
 
         .chk-wrap:checked+.chk-label .chk-box {
-            background: var(--green);
-            border-color: var(--green);
-            box-shadow: 0 0 8px rgba(0, 255, 157, .3);
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
         }
 
         .chk-wrap:checked+.chk-label .chk-box::after {
             content: '✓';
             color: #000;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 900;
-            line-height: 1;
         }
 
         .chk-wrap:checked+.chk-label .chk-text {
-            color: rgba(255, 255, 255, .55);
+            color: rgba(255, 255, 255, .4);
             text-decoration: line-through;
-            text-decoration-color: rgba(0, 255, 157, .4);
         }
 
         .chk-text {
             font-size: 14px;
             font-weight: 600;
-            line-height: 1.4;
+            color: white;
         }
 
         .chk-sub {
             font-size: 11px;
-            color: rgba(255, 255, 255, .3);
+            color: rgba(255, 255, 255, .4);
             margin-top: 2px;
-            line-height: 1.4;
         }
 
         /* ----- Inputs ----- */
@@ -257,292 +334,76 @@
         .ops-textarea {
             width: 100%;
             background: rgba(0, 0, 0, .4);
-            border: 1px solid rgba(255, 255, 255, .07);
-            border-bottom: 1px solid rgba(0, 229, 255, .3);
+            border: 1px solid rgba(0, 242, 255, 0.2);
             color: white;
-            padding: 10px 14px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 15px;
-            font-weight: 600;
+            padding: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
             outline: none;
-            border-radius: 2px;
+            border-radius: 4px;
             transition: all .2s;
         }
 
-        .ops-input:focus,
-        .ops-textarea:focus {
-            border-bottom-color: var(--cyan);
-            background: rgba(0, 229, 255, .04);
-        }
-
-        .ops-input::placeholder,
-        .ops-textarea::placeholder {
-            color: rgba(255, 255, 255, .22);
-            font-weight: 400;
-            font-size: 13px;
-        }
-
-        .ops-textarea {
-            resize: none;
-            font-size: 14px;
+        .ops-input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 15px var(--cyan-glow);
         }
 
         /* ----- Buttons ----- */
-        .btn-primary {
-            background: transparent;
-            border: 1px solid var(--cyan);
-            color: var(--cyan);
-            font-family: 'JetBrains Mono', monospace;
+        .btn-primary,
+        .btn-success,
+        .btn-danger {
+            font-family: 'Orbitron', sans-serif;
             font-size: 11px;
-            font-weight: 700;
-            letter-spacing: .12em;
-            text-transform: uppercase;
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: all .2s;
-            border-radius: 2px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary:hover {
-            background: rgba(0, 229, 255, .1);
-            box-shadow: 0 0 18px rgba(0, 229, 255, .2);
-        }
-
-        .btn-primary:active {
-            transform: scale(.98);
-        }
-
-        .btn-success {
-            background: rgba(0, 255, 157, .08);
-            border: 1px solid rgba(0, 255, 157, .5);
-            color: var(--green);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: .1em;
+            font-weight: 900;
+            letter-spacing: .15rem;
             text-transform: uppercase;
             padding: 14px 20px;
             cursor: pointer;
-            transition: all .2s;
-            border-radius: 2px;
-        }
-
-        .btn-success:hover {
-            background: rgba(0, 255, 157, .15);
-            box-shadow: 0 0 18px rgba(0, 255, 157, .2);
-        }
-
-        .btn-success:active {
-            transform: scale(.98);
-        }
-
-        .btn-danger {
-            background: transparent;
-            border: 1px solid rgba(255, 77, 109, .35);
-            color: var(--red);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            padding: 8px 14px;
-            cursor: pointer;
-            transition: all .2s;
-            border-radius: 2px;
-        }
-
-        .btn-danger:hover {
-            background: rgba(255, 77, 109, .08);
-        }
-
-        .btn-sm {
-            background: rgba(0, 229, 255, .06);
-            border: 1px solid rgba(0, 229, 255, .2);
-            color: var(--cyan);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            padding: 7px 12px;
-            cursor: pointer;
-            transition: all .2s;
-            border-radius: 2px;
-        }
-
-        .btn-sm:hover {
-            background: rgba(0, 229, 255, .14);
-        }
-
-        /* ----- Counter ----- */
-        .counter-btn {
-            width: 42px;
-            height: 42px;
-            border: 1px solid rgba(0, 229, 255, .18);
-            background: rgba(0, 229, 255, .04);
-            color: var(--cyan);
-            font-size: 16px;
-            cursor: pointer;
-            transition: all .15s;
-            border-radius: 2px;
+            transition: all .3s;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
         }
 
-        .counter-btn:hover {
-            background: rgba(0, 229, 255, .14);
-            box-shadow: 0 0 10px rgba(0, 229, 255, .15);
-        }
-
-        .counter-btn:active {
-            transform: scale(.9);
-        }
-
-        #countInput {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 40px;
-            font-weight: 700;
+        .btn-primary {
+            background: rgba(0, 242, 255, 0.05);
+            border: 1px solid var(--cyan);
             color: var(--cyan);
-            text-align: center;
-            background: transparent;
-            border: none;
-            outline: none;
-            width: 100%;
-            text-shadow: 0 0 16px rgba(0, 229, 255, .4);
-            line-height: 1;
+            box-shadow: inset 0 0 10px var(--cyan-glow);
         }
 
-        #countInput::-webkit-outer-spin-button,
-        #countInput::-webkit-inner-spin-button {
-            -webkit-appearance: none;
+        .btn-primary:hover {
+            background: var(--cyan);
+            color: black;
+            box-shadow: 0 0 20px var(--cyan);
         }
 
-        /* ----- Progress bar ----- */
-        .prog-bar {
-            height: 2px;
-            background: rgba(255, 255, 255, .06);
-            border-radius: 99px;
-            overflow: hidden;
-            margin-top: 4px;
+        .btn-primary:active {
+            transform: scale(0.95);
         }
 
-        .prog-fill {
-            height: 100%;
-            background: var(--green);
-            border-radius: 99px;
-            transition: width .3s;
+        .btn-danger {
+            background: rgba(255, 62, 62, 0.05);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
         }
 
-        /* ----- Status dot ----- */
-        .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 6px var(--green);
-            animation: blink 2s infinite;
-            flex-shrink: 0;
+        .btn-danger:hover {
+            background: var(--accent-red);
+            color: white;
+            box-shadow: 0 0 20px var(--accent-red);
         }
 
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: .4
-            }
-        }
-
-        /* ----- Toast ----- */
-        #toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: .06em;
-            padding: 11px 18px;
-            border-radius: 3px;
-            z-index: 999;
-            transform: translateY(70px);
-            opacity: 0;
-            transition: all .3s cubic-bezier(.34, 1.56, .64, 1);
-            pointer-events: none;
-        }
-
-        #toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        #toast.ok {
-            background: rgba(0, 255, 157, .1);
-            border: 1px solid rgba(0, 255, 157, .4);
-            color: var(--green);
-        }
-
-        #toast.err {
-            background: rgba(255, 77, 109, .1);
-            border: 1px solid rgba(255, 77, 109, .4);
-            color: var(--red);
-        }
-
-        /* ----- Loader ----- */
-        #loader {
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-            background: rgba(5, 7, 10, .9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .spin {
-            width: 36px;
-            height: 36px;
-            border: 2px solid rgba(0, 229, 255, .1);
-            border-top-color: var(--cyan);
-            border-radius: 50%;
-            animation: spin .6s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg)
-            }
-        }
-
-        /* ----- Divider ----- */
-        .div {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, .12), transparent);
-            margin: 14px 0;
-        }
-
-        /* ----- Global progress ----- */
-        #globalBar {
-            transition: width .4s;
-        }
-
-        /* Tab navigation for main view */
+        /* ----- Tabs ----- */
         .tab-btn {
             flex: 1;
-            padding: 10px 6px;
-            font-family: 'JetBrains Mono', monospace;
+            padding: 14px;
+            font-family: 'Orbitron', sans-serif;
             font-size: 10px;
-            font-weight: 700;
-            letter-spacing: .08em;
+            font-weight: 900;
+            letter-spacing: .1em;
             text-transform: uppercase;
             cursor: pointer;
             border: none;
@@ -555,630 +416,1004 @@
         .tab-btn.active {
             color: var(--cyan);
             border-bottom-color: var(--cyan);
-            background: rgba(0, 229, 255, .04);
+            background: rgba(0, 242, 255, .05);
         }
 
-        .tab-btn:hover:not(.active) {
-            color: rgba(255, 255, 255, .6);
+        /* ----- Header Helper ----- */
+        .header-grid {
+            display: grid !important;
+            grid-template-areas: "logo time badge" "title title title";
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.75rem;
         }
 
+        /* Responsive main view */
+        #mainView {
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* Login panel */
+        #loginView>div.panel {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* ─── Media queries ─── */
+
+        /* Très petit (< 360px) — montres, très vieux téléphones */
+        @media (max-width: 359px) {
+            .header-grid {
+                grid-template-areas: "time" "badge" "title";
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .header-logo {
+                display: none;
+            }
+
+            .chk-text {
+                font-size: 12px;
+            }
+
+            .chk-sub {
+                font-size: 10px;
+            }
+
+            .accordion-header .title {
+                font-size: 11px;
+            }
+
+            .tab-btn {
+                padding: 10px 6px;
+                font-size: 9px;
+            }
+        }
+
+        /* Mobile standard (360–639px) */
+        @media (max-width: 639px) {
+            body {
+                font-size: 14px;
+            }
+
+            .panel {
+                padding: 0.75rem;
+            }
+
+            .ops-input,
+            .ops-textarea {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .btn-primary,
+            .btn-success,
+            .btn-danger {
+                padding: 12px 16px;
+                font-size: 10px;
+            }
+        }
+
+        /* Tablette et plus (>= 640px) */
+        @media (min-width: 640px) {
+            #mainView {
+                padding: 1rem 1.5rem;
+            }
+
+            .chk-text {
+                font-size: 15px;
+            }
+
+            .chk-sub {
+                font-size: 12px;
+            }
+
+            .accordion-header .title {
+                font-size: 14px;
+            }
+        }
+
+        /* Grand écran (>= 1024px) */
+        @media (min-width: 1024px) {
+            #mainView {
+                max-width: 720px;
+            }
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: blink 2s infinite;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 242, 255, 0.05);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--cyan-dim);
+            border-radius: 10px;
+        }
+
+        /* ─── Tab Panes ─────────────────────────────────────── */
         .tab-pane {
             display: none;
         }
 
         .tab-pane.active {
             display: block;
+            animation: fadeIn .2s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Effectifs tab — cyan accent */
+        .tab-btn[data-tab="effectifs"].active {
+            color: var(--cyan);
+            border-bottom-color: var(--cyan);
+            background: rgba(0, 242, 255, .06);
+        }
+
+        /* Accueil tab — green accent */
+        .tab-btn[data-tab="accueil"].active {
+            color: var(--accent-green);
+            border-bottom-color: var(--accent-green);
+            background: rgba(34, 197, 94, .06);
+        }
+
+        .tab-btn[data-tab="accueil"]:not(.active) {
+            color: rgba(34, 197, 94, 0.35);
+        }
+
+        .tab-btn[data-tab="accueil"]:not(.active):hover {
+            color: var(--accent-green);
+            background: rgba(34, 197, 94, .04);
+        }
+
+        /* Section head per-tab color */
+        #tab-accueil .sec-head {
+            color: var(--accent-green);
+        }
+
+        #tab-accueil .sec-head::after {
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.4), transparent);
+        }
+
+        #tab-accueil .badge {
+            color: var(--accent-green);
+            border-color: rgba(34, 197, 94, .4);
+            background: rgba(34, 197, 94, .08);
+        }
+
+        #tab-accueil .badge.done {
+            background: rgba(34, 197, 94, .2);
+        }
+
+        #tab-accueil .chk-box {
+            border-color: rgba(34, 197, 94, .4);
+        }
+
+        #tab-accueil .chk-wrap:checked+.chk-label .chk-box {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+
+        /* ─── Counter Button ─────────────────────────────────── */
+        .counter-btn {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            background: rgba(0, 242, 255, .05);
+            border: 1px solid rgba(0, 242, 255, .25);
+            color: var(--cyan);
+            border-radius: 4px;
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .counter-btn:hover {
+            background: rgba(0, 242, 255, .15);
+            box-shadow: 0 0 12px rgba(0, 242, 255, .2);
+        }
+
+        .counter-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* Count input */
+        #countInput {
+            width: 100%;
+            background: rgba(0, 0, 0, .5);
+            border: 1px solid rgba(0, 242, 255, .3);
+            border-radius: 4px;
+            color: var(--cyan);
+            font-family: 'Orbitron', monospace;
+            font-size: 32px;
+            font-weight: 900;
+            text-align: center;
+            padding: 8px;
+            outline: none;
+            letter-spacing: .05em;
+        }
+
+        #countInput:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 255, .15);
+        }
+
+        /* hide native number arrows */
+        #countInput::-webkit-outer-spin-button,
+        #countInput::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+
+        /* btn-success */
+        .btn-success {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .15rem;
+            text-transform: uppercase;
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: all .3s;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(34, 197, 94, .07);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .btn-success:hover {
+            background: var(--accent-green);
+            color: black;
+            box-shadow: 0 0 20px var(--accent-green);
+        }
+
+        .btn-success:active {
+            transform: scale(.95);
         }
     </style>
 </head>
 
-<body>
-    <script>
-        // L'URL de ton script Google Apps (Ne pas oublier de refaire un déploiement et de remplacer cette URL si besoin)
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby97xRyQK-MWPIbjjaHMWXnyE-LpMHKReV2Tq2pWkhNNaJiqToE_dja-YbfEqXhx8Ql/exec";
-    </script>
+<body class="bg-black text-cyan-500 overflow-hidden font-inter h-dvh flex flex-col p-0">
 
-    <!-- Loader -->
-    <div id="loader">
-        <div class="spin"></div>
-        <p class="mono" style="font-size:10px;color:var(--cyan);letter-spacing:.18em;text-transform:uppercase">
-            Transmission...</p>
+    <!-- SCANLINE EFFECT -->
+    <div class="scanlines"></div>
+
+    <!-- LOADER -->
+    <div id="loader"
+        style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);align-items:center;justify-content:center;flex-direction:column;gap:12px">
+        <div
+            style="width:36px;height:36px;border:3px solid rgba(0,242,255,.2);border-top-color:#00f2ff;border-radius:50%;animation:spin-slow .8s linear infinite">
+        </div>
+        <div class="font-orbitron" style="font-size:9px;letter-spacing:.2em;color:rgba(0,242,255,.6)">TRANSMISSION...
+        </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast"></div>
+    <!-- TOAST -->
+    <div id="toast"
+        style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9998;padding:10px 20px;border-radius:6px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:.1em;font-weight:700;text-transform:uppercase;transition:opacity .4s;opacity:0;pointer-events:none;background:rgba(0,20,25,.95);border:1px solid rgba(0,242,255,.4);color:#00f2ff">
+    </div>
 
-    <!-- ============================================================
-     LOGIN VIEW
-============================================================ -->
-    <div id="loginView" class="flex flex-col items-center justify-center min-h-screen px-4">
-        <div class="panel p-8 w-full" style="max-width:360px">
-            <div class="corner tl"></div>
-            <div class="corner br"></div>
-            <div class="text-center mb-8">
-                <div class="mono"
-                    style="font-size:9px;letter-spacing:.28em;color:rgba(0,229,255,.35);margin-bottom:4px">EXTERNAL OPS
-                    — FOF</div>
-                <h1 class="mono font-bold"
-                    style="font-size:24px;color:var(--cyan);text-shadow:0 0 20px rgba(0,229,255,.4);letter-spacing:.08em">
-                    TERMINAL PLANTON</h1>
+    <div class="hud-container">
+        <!-- CORNER ACCENTS -->
+        <div class="corner tl"></div>
+        <div class="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-cyan-400 pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 border-cyan-400 pointer-events-none"></div>
+        <div class="corner br"></div>
+
+        <!-- ============================================================
+         LOGIN VIEW
+    ============================================================ -->
+        <div id="loginView" class="flex flex-col items-center justify-center min-h-full px-4 py-8 flex-1">
+
+            <!-- SPLASH: checking session -->
+            <div id="splashCheck" class="flex flex-col items-center gap-4 w-full" style="max-width:400px">
+                <svg width="52" height="52" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="20,2 38,11 38,29 20,38 2,29 2,11" fill="rgba(0,242,255,0.08)"
+                        stroke="rgba(0,242,255,0.5)" stroke-width="1.5" />
+                    <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle"
+                        font-family="Orbitron,monospace" font-size="10" font-weight="900" fill="#00f2ff"
+                        letter-spacing="1">FOF</text>
+                </svg>
+                <div class="font-orbitron text-center"
+                    style="font-size:10px;letter-spacing:.25em;color:rgba(0,242,255,.5)">TERMINAL PLANTON</div>
                 <div
-                    style="height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);margin:10px 0;opacity:.35">
+                    style="width:32px;height:32px;border:2px solid rgba(0,242,255,.15);border-top-color:#00f2ff;border-radius:50%;animation:spin-slow .8s linear infinite">
                 </div>
-            </div>
-            <div class="sec-head">Identifiant SL</div>
-            <input type="text" id="pseudoInput" placeholder="Ex : LOUP-42" title="Identifiant Squad Leader"
-                class="ops-input mono uppercase text-center text-lg tracking-widest mb-6"
-                onkeydown="if(event.key==='Enter')handleLogin()">
-            <button onclick="handleLogin()" class="btn-primary w-full" style="padding:14px">
-                <i class="fa-solid fa-satellite-dish mr-2"></i>Prise de Service
-            </button>
-        </div>
-        <p class="mono mt-4" style="font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,.12)">CANAL SÉCURISÉ —
-            ACCÈS RESTREINT</p>
-    </div>
-
-    <!-- ============================================================
-     MAIN VIEW
-============================================================ -->
-    <div id="mainView" class="hidden px-3 py-4" style="max-width:580px;margin:0 auto;padding-bottom:40px">
-
-        <!-- Header -->
-        <div class="panel p-4 mb-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="dot"></div>
-                <div>
-                    <div class="mono" style="font-size:8px;letter-spacing:.15em;color:rgba(255,255,255,.25)">SESSION
-                        ACTIVE</div>
-                    <div id="displayPseudo" class="mono font-bold uppercase tracking-widest"
-                        style="font-size:17px;color:var(--cyan)">---</div>
-                </div>
-            </div>
-            <button onclick="handleLogout()" class="btn-danger"><i class="fa-solid fa-power-off mr-1"></i>Fin de
-                Service</button>
-        </div>
-
-        <!-- Tabs -->
-        <div class="panel mb-4" style="overflow:hidden">
-            <div class="flex" style="border-bottom:1px solid rgba(255,255,255,.06)">
-                <button class="tab-btn active" onclick="switchTab('effectifs',this)"><i
-                        class="fa-solid fa-users mr-1"></i>Effectifs</button>
-                <button class="tab-btn" onclick="switchTab('accueil',this)"><i
-                        class="fa-solid fa-clipboard-check mr-1"></i>Accueil</button>
+                <div class="font-orbitron" style="font-size:9px;letter-spacing:.2em;color:rgba(0,242,255,.4)">
+                    VÉRIFICATION SESSION...</div>
             </div>
 
-            <div style="padding:20px">
-
-                <!-- ===== TAB: EFFECTIFS ===== -->
-                <div id="tab-effectifs" class="tab-pane active">
-                    <div class="sec-head"><i class="fa-solid fa-users"></i>Effectifs en ligne</div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <button class="counter-btn" onclick="adjust(-5)"><span style="font-size:10px">−5</span></button>
-                        <button class="counter-btn" onclick="adjust(-1)" style="font-size:22px">−</button>
-                        <div class="flex-1 text-center">
-                            <input type="number" id="countInput" value="0" title="Nombre d'effectifs" min="0">
-                            <div class="mono"
-                                style="font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-top:2px">
-                                PERSONNELS</div>
-                        </div>
-                        <button class="counter-btn" onclick="adjust(1)" style="font-size:22px">+</button>
-                        <button class="counter-btn" onclick="adjust(5)"><span style="font-size:10px">+5</span></button>
+            <!-- LOGIN FORM (hidden until splash done) -->
+            <div id="loginForm" class="panel p-6 w-full hidden" style="max-width:400px">
+                <div class="corner tl"></div>
+                <div class="corner br"></div>
+                <div class="text-center mb-6">
+                    <div class="font-orbitron"
+                        style="font-size:9px;letter-spacing:.28em;color:rgba(0,242,255,.35);margin-bottom:4px">EXTERNAL
+                        OPS
+                        — FOF</div>
+                    <h1 class="font-orbitron font-bold"
+                        style="font-size:24px;color:var(--cyan);text-shadow:0 0 20px rgba(0,242,255,.4);letter-spacing:.08em">
+                        TERMINAL PLANTON</h1>
+                    <div
+                        style="height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);margin:10px 0;opacity:.35">
                     </div>
-                    <button onclick="sendEffectifs()" class="btn-primary w-full">
-                        <i class="fa-solid fa-paper-plane mr-2"></i>Transmettre Effectifs
+                </div>
+                <div class="sec-head">Identifiant SL</div>
+                <input type="text" id="pseudoInput" placeholder="Ex : LOUP-42" title="Identifiant Squad Leader"
+                    class="ops-input font-orbitron uppercase text-center text-lg tracking-widest mb-6"
+                    onkeydown="if(event.key==='Enter')handleLogin()">
+                <button onclick="handleLogin()" class="btn-primary w-full" style="padding:14px">
+                    <i class="fa-solid fa-satellite-dish mr-2"></i>Prise de Service
+                </button>
+            </div>
+            <p class="font-orbitron mt-4" style="font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,.12)">CANAL
+                SÉCURISÉ — ACCÈS RESTREINT</p>
+        </div>
+
+        <!-- ============================================================
+         MAIN VIEW
+    ============================================================ -->
+        <div id="mainView" class="hidden px-2 py-3 flex-1 flex flex-col overflow-hidden">
+
+            <!-- Header -->
+            <header class="header-grid panel p-3 mb-3">
+                <div class="header-logo flex items-center justify-start gap-2">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        aria-label="FOF Logo">
+                        <polygon points="20,2 38,11 38,29 20,38 2,29 2,11" fill="rgba(0,242,255,0.08)"
+                            stroke="rgba(0,242,255,0.6)" stroke-width="1.5" />
+                        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle"
+                            font-family="Orbitron,monospace" font-size="10" font-weight="900" fill="#00f2ff"
+                            letter-spacing="1">FOF</text>
+                    </svg>
+                </div>
+
+                <div class="header-time flex flex-col items-center justify-center">
+                    <div id="real-time-clock"
+                        class="font-orbitron font-bold text-lg text-white tracking-widest leading-none">00:00:00</div>
+                    <div class="font-orbitron text-[9px] opacity-40 uppercase tracking-[0.2em] mt-1">Tactical Time</div>
+                </div>
+
+                <div class="header-badge flex flex-col items-end justify-center">
+                    <div class="flex items-center gap-2">
+                        <div class="dot"></div>
+                        <div id="displayPseudo"
+                            class="font-orbitron font-bold text-xs uppercase tracking-wider text-white">---</div>
+                    </div>
+                    <div class="font-orbitron text-[8px] opacity-40 uppercase tracking-widest mt-0.5">Session Active
+                    </div>
+                </div>
+
+                <div
+                    class="header-title flex items-center justify-center col-span-3 pt-2 border-t border-cyan-500/10 mt-1">
+                    <div class="font-orbitron text-[10px] uppercase tracking-[0.3em] text-cyan-400/80">Terminal Planton
+                        — Ops Center</div>
+                </div>
+            </header>
+
+            <!-- Tabs -->
+            <div class="panel mb-3 flex-1 flex flex-col overflow-hidden">
+                <div class="flex border-b border-white/5">
+                    <button class="tab-btn active flex items-center justify-center gap-2" data-tab="effectifs"
+                        onclick="switchTab('effectifs',this)" title="Effectifs en ligne">
+                        <i class="fa-solid fa-users text-[10px]"></i>
+                        <span>Effectifs</span>
+                    </button>
+                    <button class="tab-btn flex items-center justify-center gap-2" data-tab="accueil"
+                        onclick="switchTab('accueil',this)" title="Accueil recrue">
+                        <i class="fa-solid fa-user-plus text-[10px]"></i>
+                        <span>Accueil</span>
+                    </button>
+                    <button onclick="handleLogout()"
+                        class="ml-auto px-4 text-[var(--accent-red)] hover:bg-red-500/10 transition-colors flex items-center border-l border-white/5"
+                        title="Fin de service">
+                        <i class="fa-solid fa-power-off text-sm"></i>
                     </button>
                 </div>
 
-                <!-- ===== TAB: ACCUEIL ===== -->
-                <div id="tab-accueil" class="tab-pane">
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-4">
 
-                    <div class="sec-head"><i class="fa-solid fa-user-plus"></i>Identité & Formation</div>
-                    <div class="mb-4 flex flex-col gap-3">
-                        <input type="text" id="recrueNom" placeholder="Pseudo exact de la recrue"
-                            title="Nom de la recrue" class="ops-input uppercase">
+                    <!-- ===== TAB: EFFECTIFS ===== -->
+                    <div id="tab-effectifs" class="tab-pane active">
+                        <div class="sec-head"><i class="fa-solid fa-users"></i>Effectifs en ligne</div>
 
-                        <div class="relative">
-                            <input type="text" id="formateurNom" placeholder="Pseudo du formateur (Planton)"
-                                title="Nom du formateur" class="ops-input uppercase"
-                                style="border-color: rgba(0,255,157,0.3)">
-                            <span class="mono absolute right-2 top-2"
-                                style="font-size:9px; color:rgba(0,255,157,0.5); pointer-events: none;">FORMATEUR</span>
+                        <!-- Big counter -->
+                        <div class="flex items-center gap-3 mb-5">
+                            <button class="counter-btn" onclick="adjust(-5)" title="-5"><span
+                                    style="font-size:10px">−5</span></button>
+                            <button class="counter-btn" onclick="adjust(-1)" title="-1"
+                                style="font-size:22px">−</button>
+                            <div class="flex-1 text-center">
+                                <input type="number" id="countInput" value="0" title="Nombre d'effectifs" min="0">
+                                <div
+                                    style="font-size:9px;letter-spacing:.15em;color:rgba(0,242,255,.25);margin-top:4px">
+                                    PERSONNELS</div>
+                            </div>
+                            <button class="counter-btn" onclick="adjust(1)" title="+1" style="font-size:22px">+</button>
+                            <button class="counter-btn" onclick="adjust(5)" title="+5"><span
+                                    style="font-size:10px">+5</span></button>
                         </div>
+
+                        <button onclick="sendEffectifs()" class="btn-primary w-full" title="Transmettre les effectifs">
+                            <i class="fa-solid fa-satellite-dish mr-2"></i>Transmettre Effectifs
+                        </button>
                     </div>
 
-                    <!-- Global progress -->
-                    <div class="flex items-center justify-between mb-1" style="font-size:10px">
-                        <span class="mono" style="color:rgba(255,255,255,.3);letter-spacing:.1em">PROGRESSION</span>
-                        <span class="mono" id="globalCount" style="color:var(--cyan)">0/20</span>
-                    </div>
-                    <div class="prog-bar mb-4">
-                        <div id="globalBar" class="prog-fill" style="width:0%"></div>
-                    </div>
+                    <!-- ===== TAB: ACCUEIL ===== -->
+                    <div id="tab-accueil" class="tab-pane">
 
-                    <!-- ─── SECTION 1 : Arrivée ─── -->
-                    <div class="accordion open" id="acc-0">
-                        <div class="accordion-header" onclick="toggleAcc('acc-0')">
-                            <div class="title"><i class="fa-solid fa-door-open"></i>Check-list d'arrivée</div>
-                            <div style="display:flex;align-items:center;gap:8px">
-                                <div class="badge" id="badge-0">0/3</div>
-                                <i class="fa-solid fa-chevron-down chevron"></i>
+                        <div class="sec-head"><i class="fa-solid fa-user-plus"></i>Identité & Formation</div>
+                        <div class="mb-4 flex flex-col gap-3">
+                            <input type="text" id="recrueNom" placeholder="Pseudo exact de la recrue"
+                                title="Nom de la recrue" class="ops-input uppercase">
+
+                            <div class="relative">
+                                <input type="text" id="formateurNom" placeholder="Pseudo du formateur (Planton)"
+                                    title="Nom du formateur" class="ops-input uppercase"
+                                    style="border-color: rgba(0,255,157,0.3)">
+                                <span class="mono absolute right-2 top-2"
+                                    style="font-size:9px; color:rgba(0,255,157,0.5); pointer-events: none;">FORMATEUR</span>
                             </div>
                         </div>
-                        <div class="accordion-body">
-                            <input type="checkbox" id="c1" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c1" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text"><i class="fa-solid fa-id-card"
-                                            style="font-size:11px;margin-right:5px;color:rgba(0,229,255,.5)"></i>Majorité
-                                        vérifiée (18 ans+)</div>
-                                    <div class="chk-sub">Si doute → pinger la modération avant de continuer</div>
-                                </div>
-                            </label>
 
-                            <input type="checkbox" id="c2" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c2" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text"><i class="fa-solid fa-microphone"
-                                            style="font-size:11px;margin-right:5px;color:rgba(0,229,255,.5)"></i>Micro
-                                        fonctionnel (obligatoire)</div>
-                                    <div class="chk-sub">Tester la communication vocale dès le début</div>
-                                </div>
-                            </label>
-
-                            <input type="checkbox" id="c3" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c3" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text"><i class="fa-solid fa-gamepad"
-                                            style="font-size:11px;margin-right:5px;color:rgba(0,229,255,.5)"></i>Expérience
-                                        Arma notée</div>
-                                    <div class="chk-sub">Débutant / Intermédiaire / Expérimenté (optionnel)</div>
-                                </div>
-                            </label>
+                        <!-- Global progress -->
+                        <div class="flex items-center justify-between mb-1" style="font-size:10px">
+                            <span class="mono" style="color:rgba(255,255,255,.3);letter-spacing:.1em">PROGRESSION</span>
+                            <span class="mono" id="globalCount" style="color:var(--cyan)">0/20</span>
                         </div>
-                    </div>
+                        <div class="prog-bar mb-4">
+                            <div id="globalBar" class="prog-fill" style="width:0%"></div>
+                        </div>
 
-                    <!-- ─── SECTION 2 : Présentation FOF ─── -->
-                    <div class="accordion" id="acc-1">
-                        <div class="accordion-header" onclick="toggleAcc('acc-1')">
-                            <div class="title"><i class="fa-solid fa-flag"></i>Présentation FOF</div>
-                            <div style="display:flex;align-items:center;gap:8px">
-                                <div class="badge" id="badge-1">0/3</div>
-                                <i class="fa-solid fa-chevron-down chevron"></i>
+                        <!-- ─── SECTION 1 : Arrivée ─── -->
+                        <div class="accordion open" id="acc-0">
+                            <div class="accordion-header" onclick="toggleAcc('acc-0')">
+                                <div class="title"><i class="fa-solid fa-door-open"></i>Check-list d'arrivée</div>
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <div class="badge" id="badge-0">0/3</div>
+                                    <i class="fa-solid fa-chevron-down chevron"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-body">
+                                <input type="checkbox" id="c1" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c1" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text"><i class="fa-solid fa-id-card"
+                                                style="font-size:11px;margin-right:5px;color:rgba(0,229,255,.5)"></i>Majorité
+                                            vérifiée (18 ans+)</div>
+                                        <div class="chk-sub">Si doute → pinger la modération avant de continuer</div>
+                                    </div>
+                                </label>
+
+                                <input type="checkbox" id="c2" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c2" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text"><i class="fa-solid fa-microphone"
+                                                style="font-size:11px;margin-right:5px;color:rgba(0,229,255,.5)"></i>Micro
+                                            fonctionnel (obligatoire)</div>
+                                        <div class="chk-sub">Tester la communication vocale dès le début</div>
+                                    </div>
+                                </label>
+
+                                <input type="checkbox" id="c3" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c3" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text"><i class="fa-solid fa-gamepad"
+                                                style="font-size:11px;margin-right:5px;color:rgba(0,229,255,.5)"></i>Expérience
+                                            Arma notée</div>
+                                        <div class="chk-sub">Débutant / Intermédiaire / Expérimenté (optionnel)</div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
-                        <div class="accordion-body">
-                            <input type="checkbox" id="c4" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c4" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">FOF présentée</div>
-                                    <div class="chk-sub">Force Opérationnelle Française · Créée nov. 2023 · 100% PVE-IA
-                                        · +5000 membres</div>
-                                </div>
-                            </label>
 
-                            <input type="checkbox" id="c5" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c5" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Philosophie BIENVEILLANCE</div>
-                                    <div class="chk-sub">Pas de PVP, pas de compétition · Entraide valorisée · Discord
-                                        actif recommandé</div>
+                        <!-- ─── SECTION 2 : Présentation FOF ─── -->
+                        <div class="accordion" id="acc-1">
+                            <div class="accordion-header" onclick="toggleAcc('acc-1')">
+                                <div class="title"><i class="fa-solid fa-flag"></i>Présentation FOF</div>
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <div class="badge" id="badge-1">0/3</div>
+                                    <i class="fa-solid fa-chevron-down chevron"></i>
                                 </div>
-                            </label>
+                            </div>
+                            <div class="accordion-body">
+                                <input type="checkbox" id="c4" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c4" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">FOF présentée</div>
+                                        <div class="chk-sub">Force Opérationnelle Française · Créée nov. 2023 · 100%
+                                            PVE-IA
+                                            · +5000 membres</div>
+                                    </div>
+                                </label>
 
-                            <input type="checkbox" id="c6" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c6" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Attentes mutuelles vérifiées</div>
-                                    <div class="chk-sub">Demander si cela correspond à ses attentes · Questions
-                                        éventuelles</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
+                                <input type="checkbox" id="c5" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c5" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Philosophie BIENVEILLANCE</div>
+                                        <div class="chk-sub">Pas de PVP, pas de compétition · Entraide valorisée ·
+                                            Discord
+                                            actif recommandé</div>
+                                    </div>
+                                </label>
 
-                    <!-- ─── SECTION 3 : Serveurs ─── -->
-                    <div class="accordion" id="acc-2">
-                        <div class="accordion-header" onclick="toggleAcc('acc-2')">
-                            <div class="title"><i class="fa-solid fa-server"></i>Présentation Serveurs</div>
-                            <div style="display:flex;align-items:center;gap:8px">
-                                <div class="badge" id="badge-2">0/3</div>
-                                <i class="fa-solid fa-chevron-down chevron"></i>
+                                <input type="checkbox" id="c6" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c6" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Attentes mutuelles vérifiées</div>
+                                        <div class="chk-sub">Demander si cela correspond à ses attentes · Questions
+                                            éventuelles</div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
-                        <div class="accordion-body">
-                            <input type="checkbox" id="c7" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c7" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Serveur CONFLIT</div>
-                                    <div class="chk-sub">Semi-Milsim / Semi-RP · Ouvert 24h/24, 7j/7 · Temps morts
-                                        tolérés pour apprentissage</div>
-                                </div>
-                            </label>
 
-                            <input type="checkbox" id="c8" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c8" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Serveur FORMATION</div>
-                                    <div class="chk-sub">Inscription via #Formations Discord · Débute la montée en grade
-                                        · 1ère formation = Recrue</div>
+                        <!-- ─── SECTION 3 : Serveurs ─── -->
+                        <div class="accordion" id="acc-2">
+                            <div class="accordion-header" onclick="toggleAcc('acc-2')">
+                                <div class="title"><i class="fa-solid fa-server"></i>Présentation Serveurs</div>
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <div class="badge" id="badge-2">0/3</div>
+                                    <i class="fa-solid fa-chevron-down chevron"></i>
                                 </div>
-                            </label>
+                            </div>
+                            <div class="accordion-body">
+                                <input type="checkbox" id="c7" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c7" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Serveur CONFLIT</div>
+                                        <div class="chk-sub">Semi-Milsim / Semi-RP · Ouvert 24h/24, 7j/7 · Temps morts
+                                            tolérés pour apprentissage</div>
+                                    </div>
+                                </label>
 
-                            <input type="checkbox" id="c9" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c9" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Serveur MILSIM</div>
-                                    <div class="chk-sub">Missions GM ponctuelles · 19h-minuit · Accès après grade 2nde
-                                        Classe · #milsim Discord</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
+                                <input type="checkbox" id="c8" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c8" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Serveur FORMATION</div>
+                                        <div class="chk-sub">Inscription via #Formations Discord · Débute la montée en
+                                            grade
+                                            · 1ère formation = Recrue</div>
+                                    </div>
+                                </label>
 
-                    <!-- ─── SECTION 4 : Le Conflit ─── -->
-                    <div class="accordion" id="acc-3">
-                        <div class="accordion-header" onclick="toggleAcc('acc-3')">
-                            <div class="title"><i class="fa-solid fa-crosshairs"></i>Le Conflit</div>
-                            <div style="display:flex;align-items:center;gap:8px">
-                                <div class="badge" id="badge-3">0/3</div>
-                                <i class="fa-solid fa-chevron-down chevron"></i>
+                                <input type="checkbox" id="c9" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c9" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Serveur MILSIM</div>
+                                        <div class="chk-sub">Missions GM ponctuelles · 19h-minuit · Accès après grade
+                                            2nde
+                                            Classe · #milsim Discord</div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
-                        <div class="accordion-body">
-                            <input type="checkbox" id="c10" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c10" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Objectifs expliqués</div>
-                                    <div class="chk-sub">Identifier & détruire présence hostile · Protéger civils ·
-                                        Vérifier cibles (autres factions possibles)</div>
-                                </div>
-                            </label>
 
-                            <input type="checkbox" id="c11" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c11" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Factions expliquées</div>
-                                    <div class="chk-sub">Civils (non hostiles) · Américains (alliés) · FIA (neutres) ·
-                                        Autres factions · Russes (hostiles)</div>
+                        <!-- ─── SECTION 4 : Le Conflit ─── -->
+                        <div class="accordion" id="acc-3">
+                            <div class="accordion-header" onclick="toggleAcc('acc-3')">
+                                <div class="title"><i class="fa-solid fa-crosshairs"></i>Le Conflit</div>
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <div class="badge" id="badge-3">0/3</div>
+                                    <i class="fa-solid fa-chevron-down chevron"></i>
                                 </div>
-                            </label>
+                            </div>
+                            <div class="accordion-body">
+                                <input type="checkbox" id="c10" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c10" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Objectifs expliqués</div>
+                                        <div class="chk-sub">Identifier & détruire présence hostile · Protéger civils ·
+                                            Vérifier cibles (autres factions possibles)</div>
+                                    </div>
+                                </label>
 
-                            <input type="checkbox" id="c12" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c12" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Langage opérationnel</div>
-                                    <div class="chk-sub">Traiter · Neutraliser · PAX · Tango · Azimut · Clear Com ·
-                                        Standby · DCD · At Ease</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
+                                <input type="checkbox" id="c11" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c11" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Factions expliquées</div>
+                                        <div class="chk-sub">Civils (non hostiles) · Américains (alliés) · FIA (neutres)
+                                            ·
+                                            Autres factions · Russes (hostiles)</div>
+                                    </div>
+                                </label>
 
-                    <!-- ─── SECTION 5 : Affectations ─── -->
-                    <div class="accordion" id="acc-4">
-                        <div class="accordion-header" onclick="toggleAcc('acc-4')">
-                            <div class="title"><i class="fa-solid fa-sitemap"></i>Affectations & Grades</div>
-                            <div style="display:flex;align-items:center;gap:8px">
-                                <div class="badge" id="badge-4">0/3</div>
-                                <i class="fa-solid fa-chevron-down chevron"></i>
+                                <input type="checkbox" id="c12" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c12" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Langage opérationnel</div>
+                                        <div class="chk-sub">Traiter · Neutraliser · PAX · Tango · Azimut · Clear Com ·
+                                            Standby · DCD · At Ease</div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
-                        <div class="accordion-body">
-                            <input type="checkbox" id="c13" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c13" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Escouades présentées</div>
-                                    <div class="chk-sub">Infanterie (terrain) · Logistique (transport/déminage) ·
-                                        Planton (sécurité base/escorte)</div>
-                                </div>
-                            </label>
 
-                            <input type="checkbox" id="c14" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c14" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Évolution des grades</div>
-                                    <div class="chk-sub">Recrue → 2nde Classe (7-10j + formation) → 1ère Classe (1 mois)
-                                        → Caporal (spécialisation)</div>
+                        <!-- ─── SECTION 5 : Affectations ─── -->
+                        <div class="accordion" id="acc-4">
+                            <div class="accordion-header" onclick="toggleAcc('acc-4')">
+                                <div class="title"><i class="fa-solid fa-sitemap"></i>Affectations & Grades</div>
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <div class="badge" id="badge-4">0/3</div>
+                                    <i class="fa-solid fa-chevron-down chevron"></i>
                                 </div>
-                            </label>
+                            </div>
+                            <div class="accordion-body">
+                                <input type="checkbox" id="c13" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c13" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Escouades présentées</div>
+                                        <div class="chk-sub">Infanterie (terrain) · Logistique (transport/déminage) ·
+                                            Planton (sécurité base/escorte)</div>
+                                    </div>
+                                </label>
 
-                            <input type="checkbox" id="c15" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c15" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Premiers pas expliqués</div>
-                                    <div class="chk-sub">Débutant = Fusilier · Préciser au SL qu'il est nouveau ·
-                                        Accompagnement sur premières sorties</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
+                                <input type="checkbox" id="c14" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c14" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Évolution des grades</div>
+                                        <div class="chk-sub">Recrue → 2nde Classe (7-10j + formation) → 1ère Classe (1
+                                            mois)
+                                            → Caporal (spécialisation)</div>
+                                    </div>
+                                </label>
 
-                    <!-- ─── SECTION 6 : Règlement ─── -->
-                    <div class="accordion" id="acc-5">
-                        <div class="accordion-header" onclick="toggleAcc('acc-5')">
-                            <div class="title"><i class="fa-solid fa-scale-balanced"></i>Règlement</div>
-                            <div style="display:flex;align-items:center;gap:8px">
-                                <div class="badge" id="badge-5">0/5</div>
-                                <i class="fa-solid fa-chevron-down chevron"></i>
+                                <input type="checkbox" id="c15" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c15" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Premiers pas expliqués</div>
+                                        <div class="chk-sub">Débutant = Fusilier · Préciser au SL qu'il est nouveau ·
+                                            Accompagnement sur premières sorties</div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
-                        <div class="accordion-body">
-                            <input type="checkbox" id="c16" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c16" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Respect & comportement</div>
-                                    <div class="chk-sub">Respect de tous · Langage correct · Pas de discussions
-                                        politiques/religieuses · Sérieux exigé</div>
-                                </div>
-                            </label>
 
-                            <input type="checkbox" id="c17" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c17" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Interdictions jeu</div>
-                                    <div class="chk-sub">Pas de TK · Pas de déplacement seul · Pas de double
-                                        spécialité/arme · Pas de matériel russe</div>
+                        <!-- ─── SECTION 6 : Règlement ─── -->
+                        <div class="accordion" id="acc-5">
+                            <div class="accordion-header" onclick="toggleAcc('acc-5')">
+                                <div class="title"><i class="fa-solid fa-scale-balanced"></i>Règlement</div>
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <div class="badge" id="badge-5">0/5</div>
+                                    <i class="fa-solid fa-chevron-down chevron"></i>
                                 </div>
-                            </label>
+                            </div>
+                            <div class="accordion-body">
+                                <input type="checkbox" id="c16" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c16" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Respect & comportement</div>
+                                        <div class="chk-sub">Respect de tous · Langage correct · Pas de discussions
+                                            politiques/religieuses · Sérieux exigé</div>
+                                    </div>
+                                </label>
 
-                            <input type="checkbox" id="c18" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c18" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Communications radio</div>
-                                    <div class="chk-sub">Messages clairs sur radio · Chit-chat en proximité · Problème
-                                        joueur → radio 60 ou ping modérateur</div>
-                                </div>
-                            </label>
+                                <input type="checkbox" id="c17" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c17" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Interdictions jeu</div>
+                                        <div class="chk-sub">Pas de TK · Pas de déplacement seul · Pas de double
+                                            spécialité/arme · Pas de matériel russe</div>
+                                    </div>
+                                </label>
 
-                            <input type="checkbox" id="c19" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c19" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Règles d'équipement</div>
-                                    <div class="chk-sub">En base : armes déchargées/rangées · Hors base : chargées en
-                                        main · NVG 20h-6h</div>
-                                </div>
-                            </label>
+                                <input type="checkbox" id="c18" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c18" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Communications radio</div>
+                                        <div class="chk-sub">Messages clairs sur radio · Chit-chat en proximité ·
+                                            Problème
+                                            joueur → radio 60 ou ping modérateur</div>
+                                    </div>
+                                </label>
 
-                            <input type="checkbox" id="c20" class="chk-wrap" onchange="updateProgress()">
-                            <label for="c20" class="chk-label">
-                                <div class="chk-box"></div>
-                                <div>
-                                    <div class="chk-text">Pôles présentés</div>
-                                    <div class="chk-sub">EM · Développeurs · Admins/Modo · Animateurs · Game Master ·
-                                        Formateurs · Police Militaire</div>
-                                </div>
-                            </label>
+                                <input type="checkbox" id="c19" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c19" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Règles d'équipement</div>
+                                        <div class="chk-sub">En base : armes déchargées/rangées · Hors base : chargées
+                                            en
+                                            main · NVG 20h-6h</div>
+                                    </div>
+                                </label>
+
+                                <input type="checkbox" id="c20" class="chk-wrap" onchange="updateProgress()">
+                                <label for="c20" class="chk-label">
+                                    <div class="chk-box"></div>
+                                    <div>
+                                        <div class="chk-text">Pôles présentés</div>
+                                        <div class="chk-sub">EM · Développeurs · Admins/Modo · Animateurs · Game Master
+                                            ·
+                                            Formateurs · Police Militaire</div>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Notes & Validation -->
-                    <div class="div"></div>
+                        <!-- Notes & Validation -->
+                        <div class="div"></div>
 
-                    <div class="sec-head"><i class="fa-solid fa-pen-to-square"></i>Notes</div>
-                    <textarea id="recrueNotes" rows="3" placeholder="Remarques, points particuliers..."
-                        title="Notes recrutement" class="ops-textarea mb-5"></textarea>
+                        <div class="sec-head"><i class="fa-solid fa-pen-to-square"></i>Notes</div>
+                        <textarea id="recrueNotes" rows="3" placeholder="Remarques, points particuliers..."
+                            title="Notes recrutement" class="ops-textarea mb-5"></textarea>
 
-                    <button onclick="sendRecrutement()" class="btn-success w-full">
-                        <i class="fa-solid fa-check-double mr-2"></i>Valider & Archiver le Dossier
-                    </button>
+                        <button onclick="sendRecrutement()" class="btn-success w-full">
+                            <i class="fa-solid fa-check-double mr-2"></i>Valider & Archiver le Dossier
+                        </button>
 
-                </div><!-- /tab-accueil -->
+                    </div><!-- /tab-accueil -->
+                </div>
             </div>
-        </div>
 
-        <div class="text-center">
-            <span class="mono" style="font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.1)">
-                <i class="fa-solid fa-lock mr-1"></i>EXTERNAL OPS — FOF v2.3
-            </span>
-        </div>
+            <div class="text-center">
+                <span class="mono" style="font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.1)">
+                    <i class="fa-solid fa-lock mr-1"></i>EXTERNAL OPS — FOF v2.3
+                </span>
+            </div>
 
-    </div><!-- /mainView -->
+        </div><!-- /mainView -->
 
-    <script>
-        let currentPseudo = "";
+        <script>
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby97xRyQK-MWPIbjjaHMWXnyE-LpMHKReV2Tq2pWkhNNaJiqToE_dja-YbfEqXhx8Ql/exec";
+            let currentPseudo = "";
 
-        // ─── API ─────────────────────────────────────────────────────
-        async function callAPI(action, payload = {}) {
-            document.getElementById('loader').style.display = 'flex';
-            try {
-                const r = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action, pseudo: currentPseudo, ...payload }),
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    redirect: 'follow'
-                });
-                const res = await r.json();
-                if (res.status === "error") throw new Error(res.message);
-                return res.data; // On retourne juste la payload .data renvoyée par le backend
-            } catch (e) {
-                showToast("ERREUR : " + e.message, "err");
-                throw e;
-            } finally {
-                document.getElementById('loader').style.display = 'none';
+            // ─── API ─────────────────────────────────────────────────────
+            async function callAPI(action, payload = {}) {
+                const loaderEl = document.getElementById('loader');
+                if (loaderEl) loaderEl.style.display = 'flex';
+                try {
+                    const r = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action, pseudo: currentPseudo, ...payload }),
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        redirect: 'follow'
+                    });
+                    const res = await r.json();
+                    if (res.status === "error") throw new Error(res.message);
+                    return res.data;
+                } catch (e) {
+                    showToast("ERREUR : " + e.message, "err");
+                    throw e;
+                } finally {
+                    if (loaderEl) loaderEl.style.display = 'none';
+                }
             }
-        }
 
-        // ─── INITIALISATION (Vérif globale depuis le serveur) ────────
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Au chargement, on demande au Google Sheet s'il y a déjà une session ouverte
-            try {
-                const session = await callAPI('checkSession');
+            // ─── INITIALISATION (Vérif session silencieuse) ──────────────
+            document.addEventListener('DOMContentLoaded', async () => {
+                try {
+                    const r = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'checkSession' }),
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        redirect: 'follow'
+                    });
+                    const res = await r.json();
 
-                if (session && session.actif) {
-                    currentPseudo = session.pseudo;
+                    if (res && res.status === 'success' && res.data && res.data.actif) {
+                        // SL déjà en poste → connexion automatique
+                        currentPseudo = res.data.pseudo;
+                        document.getElementById('displayPseudo').innerText = currentPseudo;
+                        const fn = document.getElementById('formateurNom');
+                        if (fn) fn.value = currentPseudo;
+                        document.getElementById('loginView').classList.add('hidden');
+                        document.getElementById('mainView').classList.remove('hidden');
+                        showToast('✓ SESSION ACTIVE — ' + currentPseudo, 'ok');
+                        return;
+                    }
+                } catch (e) {
+                    // Réseau indisponible → on continue vers le formulaire
+                    console.log('Vérification session échouée :', e.message);
+                }
 
-                    // Met à jour l'affichage
+                // Aucune session → afficher le formulaire de login
+                document.getElementById('splashCheck').classList.add('hidden');
+                document.getElementById('loginForm').classList.remove('hidden');
+            });
+
+            // ─── TOAST ───────────────────────────────────────────────────
+            let toastTimer;
+            function showToast(msg, type = "ok") {
+                const t = document.getElementById('toast');
+                if (!t) return;
+                t.textContent = msg;
+                t.style.opacity = '1';
+                t.style.borderColor = type === 'err' ? 'rgba(255,62,62,.5)' : 'rgba(0,242,255,.4)';
+                t.style.color = type === 'err' ? '#ff3e3e' : '#00f2ff';
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => t.style.opacity = '0', 3500);
+            }
+
+            // ─── TABS ────────────────────────────────────────────────────
+            function switchTab(id, btn) {
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-' + id).classList.add('active');
+                btn.classList.add('active');
+            }
+
+            // ─── ACCORDION ───────────────────────────────────────────────
+            function toggleAcc(id) {
+                document.getElementById(id).classList.toggle('open');
+            }
+
+            // ─── PROGRESS ────────────────────────────────────────────────
+            const sections = [
+                { badge: 'badge-0', ids: ['c1', 'c2', 'c3'] },
+                { badge: 'badge-1', ids: ['c4', 'c5', 'c6'] },
+                { badge: 'badge-2', ids: ['c7', 'c8', 'c9'] },
+                { badge: 'badge-3', ids: ['c10', 'c11', 'c12'] },
+                { badge: 'badge-4', ids: ['c13', 'c14', 'c15'] },
+                { badge: 'badge-5', ids: ['c16', 'c17', 'c18', 'c19', 'c20'] },
+            ];
+            const totalItems = sections.reduce((a, s) => a + s.ids.length, 0);
+
+            function updateProgress() {
+                let totalChecked = 0;
+                sections.forEach(s => {
+                    const checked = s.ids.filter(id => document.getElementById(id).checked).length;
+                    totalChecked += checked;
+                    const el = document.getElementById(s.badge);
+                    el.textContent = checked + '/' + s.ids.length;
+                    el.className = 'badge' + (checked === s.ids.length ? ' done' : '');
+                });
+                document.getElementById('globalCount').textContent = totalChecked + '/' + totalItems;
+                document.getElementById('globalBar').style.width = (totalChecked / totalItems * 100) + '%';
+            }
+
+            // ─── LOGIN ───────────────────────────────────────────────────
+            async function handleLogin() {
+                const pseudo = document.getElementById('pseudoInput').value.trim().toUpperCase();
+                if (!pseudo) return;
+                try {
+                    currentPseudo = pseudo;
+
+                    // Appel API obligatoire maintenant
+                    await callAPI('login');
+
+                    // Maj UI
                     document.getElementById('displayPseudo').innerText = currentPseudo;
                     document.getElementById('formateurNom').value = currentPseudo;
-
-                    // Bascule directement sur l'interface principale
                     document.getElementById('loginView').classList.add('hidden');
                     document.getElementById('mainView').classList.remove('hidden');
 
-                    showToast("✓ SESSION RÉCUPÉRÉE — " + currentPseudo, "ok");
+                    showToast("✓ PRISE DE SERVICE — " + currentPseudo, "ok");
+                } catch (e) {
+                    currentPseudo = "";
                 }
-            } catch (e) {
-                // S'il y a une erreur ou personne connecté, on reste sur l'écran de login normalement.
-                console.log("Aucune session active ou erreur de réseau");
-            }
-        });
-
-        // ─── TOAST ───────────────────────────────────────────────────
-        let toastTimer;
-        function showToast(msg, type = "ok") {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.className = 'show ' + type;
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => t.className = type, 3500);
-        }
-
-        // ─── TABS ────────────────────────────────────────────────────
-        function switchTab(id, btn) {
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('tab-' + id).classList.add('active');
-            btn.classList.add('active');
-        }
-
-        // ─── ACCORDION ───────────────────────────────────────────────
-        function toggleAcc(id) {
-            document.getElementById(id).classList.toggle('open');
-        }
-
-        // ─── PROGRESS ────────────────────────────────────────────────
-        const sections = [
-            { badge: 'badge-0', ids: ['c1', 'c2', 'c3'] },
-            { badge: 'badge-1', ids: ['c4', 'c5', 'c6'] },
-            { badge: 'badge-2', ids: ['c7', 'c8', 'c9'] },
-            { badge: 'badge-3', ids: ['c10', 'c11', 'c12'] },
-            { badge: 'badge-4', ids: ['c13', 'c14', 'c15'] },
-            { badge: 'badge-5', ids: ['c16', 'c17', 'c18', 'c19', 'c20'] },
-        ];
-        const totalItems = sections.reduce((a, s) => a + s.ids.length, 0);
-
-        function updateProgress() {
-            let totalChecked = 0;
-            sections.forEach(s => {
-                const checked = s.ids.filter(id => document.getElementById(id).checked).length;
-                totalChecked += checked;
-                const el = document.getElementById(s.badge);
-                el.textContent = checked + '/' + s.ids.length;
-                el.className = 'badge' + (checked === s.ids.length ? ' done' : '');
-            });
-            document.getElementById('globalCount').textContent = totalChecked + '/' + totalItems;
-            document.getElementById('globalBar').style.width = (totalChecked / totalItems * 100) + '%';
-        }
-
-        // ─── LOGIN ───────────────────────────────────────────────────
-        async function handleLogin() {
-            const pseudo = document.getElementById('pseudoInput').value.trim().toUpperCase();
-            if (!pseudo) return;
-            try {
-                currentPseudo = pseudo;
-
-                // Appel API obligatoire maintenant
-                await callAPI('login');
-
-                // Maj UI
-                document.getElementById('displayPseudo').innerText = currentPseudo;
-                document.getElementById('formateurNom').value = currentPseudo;
-                document.getElementById('loginView').classList.add('hidden');
-                document.getElementById('mainView').classList.remove('hidden');
-
-                showToast("✓ PRISE DE SERVICE — " + currentPseudo, "ok");
-            } catch (e) {
-                currentPseudo = "";
-            }
-        }
-
-        // ─── LOGOUT ──────────────────────────────────────────────────
-        async function handleLogout() {
-            try {
-                await callAPI('logout'); // Dit au backend de fermer la session
-            } finally {
-                location.reload();
-            }
-        }
-
-        // ─── COUNTER ─────────────────────────────────────────────────
-        function adjust(v) {
-            const i = document.getElementById('countInput');
-            i.value = Math.max(0, parseInt(i.value || 0) + v);
-        }
-
-        // ─── EFFECTIFS ───────────────────────────────────────────────
-        async function sendEffectifs() {
-            const count = document.getElementById('countInput').value;
-            try {
-                await callAPI('effectifs', { count });
-                showToast("✓ EFFECTIFS — " + count + " PERS.", "ok");
-            } catch (e) { }
-        }
-
-        // ─── RECRUTEMENT ─────────────────────────────────────────────
-        async function sendRecrutement() {
-            const joueur = document.getElementById('recrueNom').value.trim().toUpperCase();
-            const formateur = document.getElementById('formateurNom').value.trim().toUpperCase() || currentPseudo;
-
-            if (!joueur) {
-                showToast("⚠ PSEUDO RECRUE REQUIS", "err");
-                document.getElementById('recrueNom').focus();
-                return;
             }
 
-            const nonChecked = [];
-            sections.forEach(s => {
-                s.ids.forEach(id => {
-                    if (!document.getElementById(id).checked) {
-                        nonChecked.push(document.querySelector('label[for="' + id + '"] .chk-text').textContent.trim());
-                    }
+            // ─── LOGOUT ──────────────────────────────────────────────────
+            async function handleLogout() {
+                try {
+                    await callAPI('logout'); // Dit au backend de fermer la session
+                } finally {
+                    location.reload();
+                }
+            }
+
+            // ─── COUNTER ─────────────────────────────────────────────────
+            function adjust(v) {
+                const i = document.getElementById('countInput');
+                i.value = Math.max(0, parseInt(i.value || 0) + v);
+            }
+
+            // ─── EFFECTIFS ───────────────────────────────────────────────
+            async function sendEffectifs() {
+                const count = document.getElementById('countInput').value;
+                try {
+                    await callAPI('effectifs', { count });
+                    showToast("✓ EFFECTIFS — " + count + " PERS.", "ok");
+                } catch (e) { }
+            }
+
+            // ─── RECRUTEMENT ─────────────────────────────────────────────
+            async function sendRecrutement() {
+                const joueur = document.getElementById('recrueNom').value.trim().toUpperCase();
+                const formateur = document.getElementById('formateurNom').value.trim().toUpperCase() || currentPseudo;
+
+                if (!joueur) {
+                    showToast("⚠ PSEUDO RECRUE REQUIS", "err");
+                    document.getElementById('recrueNom').focus();
+                    return;
+                }
+
+                const nonChecked = [];
+                sections.forEach(s => {
+                    s.ids.forEach(id => {
+                        if (!document.getElementById(id).checked) {
+                            nonChecked.push(document.querySelector('label[for="' + id + '"] .chk-text').textContent.trim());
+                        }
+                    });
                 });
-            });
 
-            const totalChecked = sections.reduce((a, s) => a + s.ids.filter(id => document.getElementById(id).checked).length, 0);
-            const reglement = document.getElementById('c16').checked && document.getElementById('c17').checked;
-            const explications = totalChecked >= Math.floor(totalItems * 0.7);
+                const totalChecked = sections.reduce((a, s) => a + s.ids.filter(id => document.getElementById(id).checked).length, 0);
+                const reglement = document.getElementById('c16').checked && document.getElementById('c17').checked;
+                const explications = totalChecked >= Math.floor(totalItems * 0.7);
 
-            let notes = document.getElementById('recrueNotes').value.trim();
-            if (nonChecked.length > 0) {
-                notes += (notes ? '\n' : '') + '[Non validé: ' + nonChecked.join(', ') + ']';
+                let notes = document.getElementById('recrueNotes').value.trim();
+                if (nonChecked.length > 0) {
+                    notes += (notes ? '\n' : '') + '[Non validé: ' + nonChecked.join(', ') + ']';
+                }
+                notes = `[Accueil: ${totalChecked}/${totalItems} points] ` + notes;
+
+                try {
+                    await callAPI('recrutement', {
+                        payload: { joueur, recruteur: currentPseudo, formateur: formateur, reglement, explications, notes }
+                    });
+                    showToast("✓ DOSSIER ARCHIVÉ — " + joueur, "ok");
+
+                    document.getElementById('recrueNom').value = "";
+                    document.getElementById('recrueNotes').value = "";
+                    document.getElementById('formateurNom').value = currentPseudo;
+                    document.querySelectorAll('.chk-wrap').forEach(c => c.checked = false);
+                    updateProgress();
+                } catch (e) { }
             }
-            notes = `[Accueil: ${totalChecked}/${totalItems} points] ` + notes;
-
-            try {
-                await callAPI('recrutement', {
-                    payload: { joueur, recruteur: currentPseudo, formateur: formateur, reglement, explications, notes }
-                });
-                showToast("✓ DOSSIER ARCHIVÉ — " + joueur, "ok");
-
-                document.getElementById('recrueNom').value = "";
-                document.getElementById('recrueNotes').value = "";
-                document.getElementById('formateurNom').value = currentPseudo;
-                document.querySelectorAll('.chk-wrap').forEach(c => c.checked = false);
-                updateProgress();
-            } catch (e) { }
-        }
-    </script>
+            // Initialisation de l'horloge
+            function updateClock() {
+                const now = new Date();
+                const clockEl = document.getElementById('real-time-clock');
+                if (clockEl) {
+                    clockEl.textContent = now.toLocaleTimeString('fr-FR', { hour12: false });
+                }
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+        </script>
 </body>
 
 </html>
