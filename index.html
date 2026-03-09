@@ -1243,7 +1243,7 @@
                     });
                     const res = await r.json();
 
-                    if (res && res.status === 'success' && res.data && res.data.actif) {
+                    if (res && res.status === 'ok' && res.data && res.data.actif) {
                         // SL déjà en poste → connexion automatique
                         currentPseudo = res.data.pseudo;
                         document.getElementById('displayPseudo').innerText = currentPseudo;
