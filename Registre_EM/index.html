@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Protocol EM - FOF Tactical</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #080a09; color: #e5e7eb; }
+        .mono { font-family: 'JetBrains+Mono', monospace; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080a09; }
+        ::-webkit-scrollbar-thumb { background: #1f2923; border-radius: 10px; }
+        
+        .fade-in { animation: fadeIn 0.2s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        
+        input[type="text"] { font-size: 16px !important; }
+        
+        .mode-tab { transition: all 0.2s ease; border-width: 2px; }
+        .active-mode-blue { border-color: #3b82f6 !important; background: rgba(59, 130, 246, 0.15) !important; color: #fff !important; }
+        .active-mode-orange { border-color: #f97316 !important; background: rgba(249, 115, 22, 0.15) !important; color: #fff !important; }
+        .inactive-tab { opacity: 0.3; filter: grayscale(100%); border-color: #1f2937 !important; }
+
+        .camo-bg {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .card-shadow { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.7); }
+        .glow-green { text-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+        .glow-orange { text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+        .glow-red { text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        military: { 
+                            950: '#080a09',
+                            900: '#111413', 
+                            800: '#1a1f1c', 
+                            700: '#2d3832', 
+                            accent: '#d6d6ce',
+                            valid: '#22c55e',
+                            warn: '#f59e0b',
+                            alert: '#ef4444'
+                        } 
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-military-950 camo-bg h-screen flex flex-col overflow-hidden">
+
+    <div class="bg-black border-b border-military-700 py-1.5 px-4 flex justify-between items-center text-[10px] font-bold font-mono tracking-widest shrink-0">
+        <span id="current-date" class="text-gray-500 uppercase">--/--/--</span>
+        <span id="current-time" class="text-military-accent">--:--:--</span>
+    </div>
+
+    <header class="bg-military-900 border-b-2 border-military-700 px-4 py-4 flex justify-between items-center z-50 shrink-0 shadow-2xl">
+        <div class="flex items-center gap-4">
+            <div class="bg-military-800 p-1 rounded-lg border border-military-700 shadow-inner">
+                <img src="logofof.png" alt="FOF" class="w-10 h-10 object-contain">
+            </div>
+            <div>
+                <h1 class="text-sm font-black text-white tracking-tighter uppercase leading-none">Protocol EM</h1>
+                <p class="text-[9px] text-military-valid font-black tracking-widest mt-1 uppercase">Contrôle de Registre</p>
+            </div>
+        </div>
+        <button onclick="toggleSidebar()" class="p-3 bg-military-800 rounded-xl border-2 border-military-700 active:scale-90 transition-transform">
+            <i data-lucide="help-circle" class="w-6 h-6 text-military-accent"></i>
+        </button>
+    </header>
+
+    <div class="grid grid-cols-2 bg-military-900 border-b border-military-700 p-3 gap-3 shrink-0">
+        <button onclick="setMode('light')" id="tab-light" class="mode-tab py-3.5 flex flex-col items-center justify-center rounded-xl border-2">
+            <span class="text-xs font-black uppercase">Mode Light</span>
+            <span class="text-[8px] font-bold opacity-60 tracking-widest mt-1">< 30 JOUEURS</span>
+        </button>
+        <button onclick="setMode('heavy')" id="tab-heavy" class="mode-tab py-3.5 flex flex-col items-center justify-center rounded-xl border-2">
+            <span class="text-xs font-black uppercase">Affluence</span>
+            <span class="text-[8px] font-bold opacity-60 tracking-widest mt-1">≥ 30 JOUEURS</span>
+        </button>
+    </div>
+
+    <div class="p-4 bg-military-950 shrink-0 relative z-10 border-b border-military-800">
+        <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                <i data-lucide="search" class="text-military-accent w-5 h-5 opacity-40 group-focus-within:opacity-100 transition-opacity"></i>
+            </div>
+            <input type="text" id="searchInput" class="block w-full pl-14 pr-4 py-4 bg-military-900 border-2 border-military-700 rounded-2xl text-white font-black placeholder-military-700 focus:border-military-accent focus:bg-military-800 outline-none transition-all shadow-inner" placeholder="PSEUDO DU JOUEUR..." autocomplete="off">
+        </div>
+    </div>
+
+    <main class="flex-1 overflow-y-auto p-4 pb-20">
+        <div id="resultsGrid" class="space-y-4 max-w-lg mx-auto">
+            <div class="text-center py-24 opacity-10">
+                <i data-lucide="shield" class="w-20 h-20 mx-auto mb-4"></i>
+                <p class="text-[10px] font-mono tracking-[0.5em] uppercase">Scan Identification</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/95 z-[60] hidden backdrop-blur-md" onclick="toggleSidebar()"></div>
+    <aside id="sidebar" class="fixed inset-y-0 right-0 w-[90%] bg-military-900 z-[70] transform translate-x-full transition-transform duration-300 flex flex-col border-l-4 border-military-accent">
+        <div class="p-6 border-b border-military-700 flex justify-between items-center">
+            <h2 class="text-sm font-black text-white uppercase tracking-widest">Notice Protocol</h2>
+            <button onclick="toggleSidebar()" class="p-2 bg-military-800 rounded-lg"><i data-lucide="x" class="w-6 h-6"></i></button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-8 flex-1">
+            <section>
+                <h3 class="text-xs font-black text-military-accent uppercase tracking-widest mb-4 border-b border-military-700 pb-2">Code Couleur Accès</h3>
+                <div class="space-y-4">
+                    <div class="bg-military-800 p-3 rounded-xl border-l-4 border-military-valid">
+                        <p class="text-[11px] font-black text-white uppercase">Vert : Accès Validé</p>
+                        <p class="text-[9px] text-gray-500 mt-1 italic">Membres et Recrues à jour du registre.</p>
+                    </div>
+                    <div class="bg-military-800 p-3 rounded-xl border-l-4 border-military-warn">
+                        <p class="text-[11px] font-black text-white uppercase">Orange : Dossier Incomplet</p>
+                        <p class="text-[9px] text-gray-500 mt-1 italic">Sur Discord mais sans Lettre de Motivation.</p>
+                    </div>
+                    <div class="bg-military-800 p-3 rounded-xl border-l-4 border-military-alert">
+                        <p class="text-[11px] font-black text-white uppercase">Rouge : Interdit / Inconnu</p>
+                        <p class="text-[9px] text-gray-500 mt-1 italic">Joueur hors registre ou protocole restreint.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </aside>
+
+    <script src="../fof_data_full.js"></script>
+
+    <script>
+        let currentMode = 'light';
+        let allPlayers = [];
+
+        if (typeof FOF_DATA !== 'undefined') {
+            Object.keys(FOF_DATA.gradeDetails).forEach(grade => {
+                FOF_DATA.gradeDetails[grade].forEach(p => { allPlayers.push({ ...p, currentGrade: grade }); });
+            });
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const timeEl = document.getElementById('current-time');
+            const dateEl = document.getElementById('current-date');
+            if (timeEl) timeEl.textContent = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            if (dateEl) dateEl.textContent = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            const tabLight = document.getElementById('tab-light');
+            const tabHeavy = document.getElementById('tab-heavy');
+            if (!tabLight || !tabHeavy) return;
+            if (mode === 'light') {
+                tabLight.className = "mode-tab py-3.5 flex flex-col items-center justify-center rounded-xl border-2 active-mode-blue shadow-lg";
+                tabHeavy.className = "mode-tab py-3.5 flex flex-col items-center justify-center rounded-xl border-2 inactive-tab";
+            } else {
+                tabHeavy.className = "mode-tab py-3.5 flex flex-col items-center justify-center rounded-xl border-2 active-mode-orange shadow-lg";
+                tabLight.className = "mode-tab py-3.5 flex flex-col items-center justify-center rounded-xl border-2 inactive-tab";
+            }
+            executeSearch();
+        }
+
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('sidebarOverlay');
+            if (sb && ov) { sb.classList.toggle('translate-x-full'); ov.classList.toggle('hidden'); }
+        }
+
+        function executeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+            const query = searchInput.value.toLowerCase().trim();
+            const grid = document.getElementById('resultsGrid');
+            if (query === '') {
+                grid.innerHTML = `<div class="text-center py-24 opacity-10"><i data-lucide="shield" class="w-16 h-16 mx-auto mb-4"></i><p class="text-[10px] font-mono tracking-[0.5em] uppercase">Scan Identification</p></div>`;
+                lucide.createIcons();
+                return;
+            }
+            const results = allPlayers.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                (p.username && p.username.toLowerCase().includes(query))
+            );
+            if (results.length === 0) {
+                grid.innerHTML = `
+                    <div class="bg-red-900/20 border-2 border-red-600 rounded-2xl p-6 fade-in text-center">
+                        <i data-lucide="user-x" class="text-red-500 w-12 h-12 mx-auto mb-2"></i>
+                        <h3 class="text-lg font-black text-red-500 uppercase italic tracking-tighter">HORS REGISTRE</h3>
+                        <p class="text-[11px] font-bold text-red-400 mt-2 uppercase tracking-wide">FUSILIER SEUL - ÉVICTION PRIORITAIRE</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+            grid.innerHTML = results.slice(0, 8).map(p => renderPlayerCard(p)).join('');
+            lucide.createIcons();
+        }
+
+        function renderPlayerCard(p) {
+            const isRecrue = p.currentGrade === "Recrue";
+            const isVisiteur = p.currentGrade === "Membre (Non-LM)";
+            const isCadre = ["Lieutenant", "Capitaine", "Major", "Adjudant Chef", "Adjudant", "Colonel", "Général"].some(g => p.currentGrade.includes(g));
+            
+            let status = "AUTHORIZED";
+            if (isVisiteur) { status = currentMode === 'light' ? "RESTRICTED" : "DENIED"; }
+
+            let accentColor, statusText, complianceText, complianceColor, glowClass, instructions = [];
+            
+            if (isCadre) {
+                accentColor = "military-valid"; statusText = "ACCÈS PRIORITAIRE";
+                complianceText = "REGISTRE CONFORME"; complianceColor = "text-military-valid"; glowClass = "glow-green";
+                instructions = ["COMMANDEMENT LIBRE.", "SPÉCIALITÉ LIBRE.", "DROIT D'ÉVICTION TOTAL."];
+            } else if (isRecrue) {
+                accentColor = "military-valid"; statusText = "ACCÈS VALIDE";
+                complianceText = "REGISTRE CONFORME"; complianceColor = "text-military-valid"; glowClass = "glow-green";
+                instructions = ["SPÉ AUTORISÉE.", "PRIORITAIRE SUR VISITEURS.", "PLACE GARANTIE."];
+            } else if (isVisiteur) {
+                complianceText = "DOSSIER INCOMPLET (SANS LM)";
+                if (currentMode === 'light') {
+                    accentColor = "military-warn"; statusText = "DERNIER RECOURS";
+                    complianceColor = "text-military-warn"; glowClass = "glow-orange";
+                    instructions = ["SPÉ SI PAS LE CHOIX.", "NON-PRIORITAIRE.", "POSTER LM SUR DISCORD."];
+                } else {
+                    accentColor = "military-alert"; statusText = "HORS PROTOCOLE";
+                    complianceColor = "text-military-alert"; glowClass = "glow-red";
+                    instructions = ["FUSILIER SEUL.", "ÉVICTION SI MEMBRE.", "ACCÈS RESTREINT."];
+                }
+            } else {
+                accentColor = "military-valid"; statusText = "ACCÈS VALIDE";
+                complianceText = "REGISTRE CONFORME"; complianceColor = "text-military-valid"; glowClass = "glow-green";
+                instructions = ["SPÉCIALITÉS LIBRES.", "PRIORITAIRE SUR RECRUES.", "DROIT D'ÉVICTION."];
+            }
+
+            const borderClass = `border-l-[8px] border-${accentColor}`;
+            const icon = status === 'DENIED' ? 'x-circle' : (status === 'RESTRICTED' ? 'alert-circle' : 'shield-check');
+
+            return `
+                <div class="bg-military-900 ${borderClass} rounded-2xl overflow-hidden fade-in card-shadow border border-military-700/50">
+                    <div class="p-5 flex flex-col gap-4 relative">
+                        <!-- ICON FLOTTANTE -->
+                        <div class="absolute top-5 right-5 opacity-20">
+                            <i data-lucide="${icon}" class="text-${accentColor} w-10 h-10"></i>
+                        </div>
+
+                        <!-- LIGNE 1 : IDENTITÉ -->
+                        <div class="flex gap-4 items-start">
+                            <div class="relative shrink-0">
+                                <img src="${p.avatar || 'https://ui-avatars.com/api/?name=' + p.name + '&background=1f2937&color=fff'}" class="w-20 h-20 rounded-2xl border-2 border-military-700 shadow-xl object-cover">
+                                <div class="absolute -top-1 -right-1 w-5 h-5 bg-${accentColor} rounded-full border-2 border-military-900 shadow-lg"></div>
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h3 class="text-xl font-black text-white truncate uppercase tracking-tighter">${p.name}</h3>
+                                    ${p.isStaff ? '<span class="bg-red-600 text-[9px] font-black px-2 py-0.5 rounded text-white shadow-lg">STAFF</span>' : ''}
+                                </div>
+                                <div class="flex flex-col mt-1">
+                                    <span class="text-sm font-black text-gray-300 uppercase tracking-widest italic">${p.currentGrade}</span>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <i data-lucide="at-sign" class="w-3 h-3 text-military-accent"></i>
+                                        <span class="text-[10px] font-bold text-military-accent uppercase tracking-wider">${p.username || 'Inconnu'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LIGNE 2 : INFOS REGISTRE -->
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <div class="bg-black/40 p-2 rounded-xl border border-white/5 shadow-inner">
+                                <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-1">Date d'arrivée</p>
+                                <p class="text-[11px] font-black text-white">${p.joinedAt}</p>
+                            </div>
+                            <div class="bg-black/40 p-2 rounded-xl border border-white/5 shadow-inner">
+                                <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-1">Ancienneté</p>
+                                <p class="text-[11px] font-black text-white">${p.days} JOURS</p>
+                            </div>
+                        </div>
+
+                        <!-- LIGNE 3 : VERDICT -->
+                        <div class="mt-2 flex items-center justify-between bg-black/40 px-3 py-2 rounded-xl border border-white/5">
+                            <span class="text-[10px] font-black ${complianceColor} uppercase tracking-tighter ${glowClass}">
+                                ${complianceText}
+                            </span>
+                            <span class="text-[10px] font-black text-white uppercase tracking-widest bg-${accentColor}/20 px-2 py-0.5 rounded border border-${accentColor}/30">
+                                ${statusText}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- LIGNE 4 : CONSIGNES -->
+                    <div class="px-5 py-4 bg-black/60 border-t border-military-700/30">
+                        <ul class="space-y-2">
+                            ${instructions.map(i => `
+                                <li class="flex items-start gap-3 text-[12px] font-black text-white leading-tight">
+                                    <i data-lucide="chevron-right" class="w-4 h-4 text-${accentColor} shrink-0"></i>
+                                    <span>${i}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            setInterval(updateDateTime, 1000);
+            updateDateTime();
+            setMode('light');
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(window.searchTimer);
+                    window.searchTimer = setTimeout(executeSearch, 200);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

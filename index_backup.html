@@ -136,9 +136,32 @@
                 </div>
             </header>
 
-            <!-- Main Content Area -->
-            <div class="panel flex-1 flex flex-col overflow-hidden p-0 border-none bg-transparent shadow-none" style="clip-path:none;">
-                <div class="flex-1 overflow-y-auto custom-scrollbar p-2 pb-24 md:pb-6">
+            <!-- Tabs -->
+            <div class="panel mb-3 flex-1 flex flex-col overflow-hidden">
+                <div class="flex border-b border-white/5">
+                    <button class="tab-btn active flex items-center justify-center gap-2" data-tab="effectifs"
+                        onclick="switchTab('effectifs',this)" title="Effectifs en ligne">
+                        <i class="fa-solid fa-users text-[10px]"></i>
+                        <span>Effectifs</span>
+                    </button>
+                    <button class="tab-btn flex items-center justify-center gap-2" data-tab="accueil"
+                        onclick="switchTab('accueil',this)" title="Accueil recrue">
+                        <i class="fa-solid fa-user-plus text-[10px]"></i>
+                        <span>Accueil</span>
+                    </button>
+                    <button class="tab-btn flex items-center justify-center gap-2" data-tab="registre"
+                        onclick="switchTab('registre',this)" title="Registre EM">
+                        <i class="fa-solid fa-book text-[10px]"></i>
+                        <span>Registre</span>
+                    </button>
+                    <button onclick="handleLogout()"
+                        class="ml-auto px-4 text-[var(--accent-red)] hover:bg-red-500/10 transition-colors flex items-center border-l border-white/5"
+                        title="Fin de service">
+                        <i class="fa-solid fa-power-off text-sm"></i>
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-4">
 
                     <!-- ===== TAB: EFFECTIFS ===== -->
                     <div id="tab-effectifs" class="tab-pane active">
@@ -490,34 +513,14 @@
                     </div><!-- /tab-accueil -->
 
                     <!-- ===== TAB: REGISTRE ===== -->
-                    <div id="tab-registre" class="tab-pane h-full relative panel p-0" style="height: calc(100vh - 120px); min-height: 500px;">
+                    <div id="tab-registre" class="tab-pane h-full relative" style="height: calc(100vh - 180px); padding: 0; min-height: 500px;">
                         <iframe src="Registre_EM/index.html" class="w-full h-full border-none absolute inset-0"></iframe>
                     </div><!-- /tab-registre -->
 
                 </div>
             </div>
 
-            <!-- BOTTOM NAVIGATION -->
-            <nav class="bottom-nav">
-                <button class="tab-btn active" data-tab="effectifs" onclick="switchTab('effectifs',this)">
-                    <i class="fa-solid fa-users"></i>
-                    <span>Effectifs</span>
-                </button>
-                <button class="tab-btn" data-tab="accueil" onclick="switchTab('accueil',this)">
-                    <i class="fa-solid fa-user-plus"></i>
-                    <span>Accueil</span>
-                </button>
-                <button class="tab-btn" data-tab="registre" onclick="switchTab('registre',this)">
-                    <i class="fa-solid fa-book"></i>
-                    <span>Registre</span>
-                </button>
-                <button onclick="handleLogout()" class="tab-btn logout-btn">
-                    <i class="fa-solid fa-power-off"></i>
-                    <span>Quitter</span>
-                </button>
-            </nav>
-
-            <div class="text-center hidden md:block">
+            <div class="text-center">
                 <span class="mono" style="font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.1)">
                     <i class="fa-solid fa-lock mr-1"></i>EXTERNAL OPS — FOF v2.3
                 </span>
