@@ -59,25 +59,7 @@
 </head>
 <body class="bg-military-950 camo-bg h-screen flex flex-col overflow-hidden">
 
-    <div class="bg-black border-b border-military-700 py-1.5 px-4 flex justify-between items-center text-[10px] font-bold font-mono tracking-widest shrink-0">
-        <span id="current-date" class="text-gray-500 uppercase">--/--/--</span>
-        <span id="current-time" class="text-military-accent">--:--:--</span>
-    </div>
 
-    <header class="bg-military-900 border-b-2 border-military-700 px-4 py-4 flex justify-between items-center z-50 shrink-0 shadow-2xl">
-        <div class="flex items-center gap-4">
-            <div class="bg-military-800 p-1 rounded-lg border border-military-700 shadow-inner">
-                <img src="logofof.png" alt="FOF" class="w-10 h-10 object-contain">
-            </div>
-            <div>
-                <h1 class="text-sm font-black text-white tracking-tighter uppercase leading-none">Protocol EM</h1>
-                <p class="text-[9px] text-military-valid font-black tracking-widest mt-1 uppercase">Contrôle de Registre</p>
-            </div>
-        </div>
-        <button onclick="toggleSidebar()" class="p-3 bg-military-800 rounded-xl border-2 border-military-700 active:scale-90 transition-transform">
-            <i data-lucide="help-circle" class="w-6 h-6 text-military-accent"></i>
-        </button>
-    </header>
 
     <div class="grid grid-cols-2 bg-military-900 border-b border-military-700 p-3 gap-3 shrink-0">
         <button onclick="setMode('light')" id="tab-light" class="mode-tab py-3.5 flex flex-col items-center justify-center rounded-xl border-2">
@@ -108,32 +90,7 @@
         </div>
     </main>
 
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/95 z-[60] hidden backdrop-blur-md" onclick="toggleSidebar()"></div>
-    <aside id="sidebar" class="fixed inset-y-0 right-0 w-[90%] bg-military-900 z-[70] transform translate-x-full transition-transform duration-300 flex flex-col border-l-4 border-military-accent">
-        <div class="p-6 border-b border-military-700 flex justify-between items-center">
-            <h2 class="text-sm font-black text-white uppercase tracking-widest">Notice Protocol</h2>
-            <button onclick="toggleSidebar()" class="p-2 bg-military-800 rounded-lg"><i data-lucide="x" class="w-6 h-6"></i></button>
-        </div>
-        <div class="p-6 overflow-y-auto space-y-8 flex-1">
-            <section>
-                <h3 class="text-xs font-black text-military-accent uppercase tracking-widest mb-4 border-b border-military-700 pb-2">Code Couleur Accès</h3>
-                <div class="space-y-4">
-                    <div class="bg-military-800 p-3 rounded-xl border-l-4 border-military-valid">
-                        <p class="text-[11px] font-black text-white uppercase">Vert : Accès Validé</p>
-                        <p class="text-[9px] text-gray-500 mt-1 italic">Membres et Recrues à jour du registre.</p>
-                    </div>
-                    <div class="bg-military-800 p-3 rounded-xl border-l-4 border-military-warn">
-                        <p class="text-[11px] font-black text-white uppercase">Orange : Dossier Incomplet</p>
-                        <p class="text-[9px] text-gray-500 mt-1 italic">Sur Discord mais sans Lettre de Motivation.</p>
-                    </div>
-                    <div class="bg-military-800 p-3 rounded-xl border-l-4 border-military-alert">
-                        <p class="text-[11px] font-black text-white uppercase">Rouge : Interdit / Inconnu</p>
-                        <p class="text-[9px] text-gray-500 mt-1 italic">Joueur hors registre ou protocole restreint.</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </aside>
+
 
     <script src="../fof_data_full.js"></script>
 
