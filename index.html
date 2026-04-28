@@ -137,7 +137,8 @@
             </header>
 
             <!-- Main Content Area -->
-            <div class="panel flex-1 flex flex-col overflow-hidden p-0 border-none bg-transparent shadow-none" style="clip-path:none;">
+            <div class="panel flex-1 flex flex-col overflow-hidden p-0 border-none bg-transparent shadow-none"
+                style="clip-path:none;">
                 <div class="flex-1 overflow-y-auto custom-scrollbar p-2 pb-24 md:pb-6">
 
                     <!-- ===== TAB: EFFECTIFS ===== -->
@@ -166,7 +167,7 @@
                         </button>
                     </div>
 
-                    <!-- ===== TAB: ACCUEIL ===== -->
+                    <!-- ===== TAB: ACCUEIL. ===== -->
                     <div id="tab-accueil" class="tab-pane active">
 
                         <div class="sec-head"><i class="fa-solid fa-user-plus"></i>Identité & Formation</div>
@@ -490,8 +491,10 @@
                     </div><!-- /tab-accueil -->
 
                     <!-- ===== TAB: REGISTRE ===== -->
-                    <div id="tab-registre" class="tab-pane h-full relative panel p-0" style="height: calc(100vh - 120px); min-height: 500px;">
-                        <iframe src="Registre_EM/index.html" class="w-full h-full border-none absolute inset-0"></iframe>
+                    <div id="tab-registre" class="tab-pane h-full relative panel p-0"
+                        style="height: calc(100vh - 120px); min-height: 500px;">
+                        <iframe src="Registre_EM/index.html"
+                            class="w-full h-full border-none absolute inset-0"></iframe>
                     </div><!-- /tab-registre -->
 
                 </div>
@@ -511,7 +514,8 @@
                     <i class="fa-solid fa-book"></i>
                     <span>Registre</span>
                 </button>
-                <button class="tab-btn text-[var(--cyan)]" onclick="document.getElementById('helpModal').classList.remove('hidden')">
+                <button class="tab-btn text-[var(--cyan)]"
+                    onclick="document.getElementById('helpModal').classList.remove('hidden')">
                     <i class="fa-solid fa-circle-question"></i>
                     <span>Notice</span>
                 </button>
@@ -530,24 +534,30 @@
         </div><!-- /mainView -->
 
         <!-- HELP MODAL -->
-        <div id="helpModal" class="hidden fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
+        <div id="helpModal"
+            class="hidden fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
             <div class="panel w-full max-w-sm flex flex-col gap-4 relative border-[var(--cyan)]">
-                <button onclick="document.getElementById('helpModal').classList.add('hidden')" class="absolute top-2 right-2 text-white/50 hover:text-white p-2 z-10">
+                <button onclick="document.getElementById('helpModal').classList.add('hidden')"
+                    class="absolute top-2 right-2 text-white/50 hover:text-white p-2 z-10">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
-                <div class="sec-head mb-0 text-[var(--cyan)]"><i class="fa-solid fa-circle-question"></i>Notice Protocol</div>
-                
+                <div class="sec-head mb-0 text-[var(--cyan)]"><i class="fa-solid fa-circle-question"></i>Notice Protocol
+                </div>
+
                 <div class="flex flex-col gap-3 mt-2">
                     <div class="p-3 border-l-4 border-[#22c55e] bg-[#22c55e]/10 rounded-r">
-                        <p class="text-[12px] font-black text-white uppercase font-orbitron tracking-widest">Vert : Accès Validé</p>
+                        <p class="text-[12px] font-black text-white uppercase font-orbitron tracking-widest">Vert :
+                            Accès Validé</p>
                         <p class="text-[10px] text-gray-400 mt-1">Membres et Recrues à jour du registre.</p>
                     </div>
                     <div class="p-3 border-l-4 border-[#f59e0b] bg-[#f59e0b]/10 rounded-r">
-                        <p class="text-[12px] font-black text-white uppercase font-orbitron tracking-widest">Orange : Dossier Incomplet</p>
+                        <p class="text-[12px] font-black text-white uppercase font-orbitron tracking-widest">Orange :
+                            Dossier Incomplet</p>
                         <p class="text-[10px] text-gray-400 mt-1">Sur Discord mais sans Lettre de Motivation.</p>
                     </div>
                     <div class="p-3 border-l-4 border-[#ef4444] bg-[#ef4444]/10 rounded-r">
-                        <p class="text-[12px] font-black text-white uppercase font-orbitron tracking-widest">Rouge : Interdit / Inconnu</p>
+                        <p class="text-[12px] font-black text-white uppercase font-orbitron tracking-widest">Rouge :
+                            Interdit / Inconnu</p>
                         <p class="text-[10px] text-gray-400 mt-1">Joueur hors registre ou protocole restreint.</p>
                     </div>
                 </div>
