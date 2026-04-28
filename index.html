@@ -511,6 +511,10 @@
                     <i class="fa-solid fa-book"></i>
                     <span>Registre</span>
                 </button>
+                <button class="tab-btn text-[var(--cyan)]" onclick="document.getElementById('helpModal').classList.remove('hidden')">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span>Notice</span>
+                </button>
                 <button onclick="handleLogout()" class="tab-btn logout-btn">
                     <i class="fa-solid fa-power-off"></i>
                     <span>Quitter</span>
@@ -524,6 +528,31 @@
             </div>
 
         </div><!-- /mainView -->
+
+        <!-- HELP MODAL -->
+        <div id="helpModal" class="hidden fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="panel w-full max-w-sm flex flex-col gap-4 relative border-[var(--cyan)]">
+                <button onclick="document.getElementById('helpModal').classList.add('hidden')" class="absolute top-2 right-2 text-white/50 hover:text-white p-2 z-10">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+                <div class="sec-head mb-0 text-[var(--cyan)]"><i class="fa-solid fa-circle-question"></i>Notice Protocol</div>
+                
+                <div class="flex flex-col gap-3 mt-2">
+                    <div class="p-3 border-l-4 border-[#22c55e] bg-[#22c55e]/10 rounded-r">
+                        <p class="text-[12px] font-black text-white uppercase font-orbitron tracking-widest">Vert : Accès Validé</p>
+                        <p class="text-[10px] text-gray-400 mt-1">Membres et Recrues à jour du registre.</p>
+                    </div>
+                    <div class="p-3 border-l-4 border-[#f59e0b] bg-[#f59e0b]/10 rounded-r">
+                        <p class="text-[12px] font-black text-white uppercase font-orbitron tracking-widest">Orange : Dossier Incomplet</p>
+                        <p class="text-[10px] text-gray-400 mt-1">Sur Discord mais sans Lettre de Motivation.</p>
+                    </div>
+                    <div class="p-3 border-l-4 border-[#ef4444] bg-[#ef4444]/10 rounded-r">
+                        <p class="text-[12px] font-black text-white uppercase font-orbitron tracking-widest">Rouge : Interdit / Inconnu</p>
+                        <p class="text-[10px] text-gray-400 mt-1">Joueur hors registre ou protocole restreint.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script src="script.js"></script>
 </body>
