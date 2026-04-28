@@ -141,7 +141,7 @@
                 <div class="flex-1 overflow-y-auto custom-scrollbar p-2 pb-24 md:pb-6">
 
                     <!-- ===== TAB: EFFECTIFS ===== -->
-                    <div id="tab-effectifs" class="tab-pane active">
+                    <div id="tab-effectifs" class="tab-pane">
                         <div class="sec-head"><i class="fa-solid fa-users"></i>Effectifs en ligne</div>
 
                         <!-- Big counter -->
@@ -167,7 +167,7 @@
                     </div>
 
                     <!-- ===== TAB: ACCUEIL ===== -->
-                    <div id="tab-accueil" class="tab-pane">
+                    <div id="tab-accueil" class="tab-pane active">
 
                         <div class="sec-head"><i class="fa-solid fa-user-plus"></i>Identité & Formation</div>
                         <div class="mb-4 flex flex-col gap-3">
@@ -499,11 +499,11 @@
 
             <!-- BOTTOM NAVIGATION -->
             <nav class="bottom-nav">
-                <button class="tab-btn active" data-tab="effectifs" onclick="switchTab('effectifs',this)">
+                <button class="tab-btn" data-tab="effectifs" onclick="switchTab('effectifs',this)">
                     <i class="fa-solid fa-users"></i>
                     <span>Effectifs</span>
                 </button>
-                <button class="tab-btn" data-tab="accueil" onclick="switchTab('accueil',this)">
+                <button class="tab-btn active" data-tab="accueil" onclick="switchTab('accueil',this)">
                     <i class="fa-solid fa-user-plus"></i>
                     <span>Accueil</span>
                 </button>

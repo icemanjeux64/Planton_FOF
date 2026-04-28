@@ -90,12 +90,12 @@
         </button>
     </div>
 
-    <div class="p-4 bg-military-950 shrink-0 relative z-10 border-b border-military-800">
+    <div class="px-4 py-2 bg-military-950 shrink-0 relative z-10 border-b border-military-800">
         <div class="relative group">
-            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                <i data-lucide="search" class="text-military-accent w-5 h-5 opacity-40 group-focus-within:opacity-100 transition-opacity"></i>
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="search" class="text-military-accent w-4 h-4 opacity-40 group-focus-within:opacity-100 transition-opacity"></i>
             </div>
-            <input type="text" id="searchInput" class="block w-full pl-14 pr-4 py-4 bg-military-900 border-2 border-military-700 rounded-2xl text-white font-black placeholder-military-700 focus:border-military-accent focus:bg-military-800 outline-none transition-all shadow-inner" placeholder="PSEUDO DU JOUEUR..." autocomplete="off">
+            <input type="text" id="searchInput" class="block w-full pl-10 pr-3 py-2 bg-military-900 border-2 border-military-700 rounded-xl text-sm text-white font-black placeholder-military-700 focus:border-military-accent focus:bg-military-800 outline-none transition-all shadow-inner" placeholder="PSEUDO DU JOUEUR..." autocomplete="off">
         </div>
     </div>
 
@@ -240,41 +240,36 @@
                 instructions = ["SPÉCIALITÉS LIBRES.", "PRIORITAIRE SUR RECRUES.", "DROIT D'ÉVICTION."];
             }
 
-            const borderClass = `border-l-[8px] border-${accentColor}`;
+            const borderClass = `border-[3px] border-${accentColor}`;
             const icon = status === 'DENIED' ? 'x-circle' : (status === 'RESTRICTED' ? 'alert-circle' : 'shield-check');
 
             return `
-                <div class="bg-military-900 ${borderClass} rounded-2xl overflow-hidden fade-in card-shadow border border-military-700/50">
-                    <div class="p-5 flex flex-col gap-4 relative">
-                        <!-- ICON FLOTTANTE -->
-                        <div class="absolute top-5 right-5 opacity-20">
-                            <i data-lucide="${icon}" class="text-${accentColor} w-10 h-10"></i>
-                        </div>
-
+                <div class="bg-military-900 ${borderClass} rounded-2xl overflow-hidden fade-in card-shadow">
+                    <div class="p-4 flex flex-col gap-4 relative">
                         <!-- LIGNE 1 : IDENTITÉ -->
                         <div class="flex gap-4 items-start">
                             <div class="relative shrink-0">
-                                <img src="${p.avatar || 'https://ui-avatars.com/api/?name=' + p.name + '&background=1f2937&color=fff'}" class="w-20 h-20 rounded-2xl border-2 border-military-700 shadow-xl object-cover">
-                                <div class="absolute -top-1 -right-1 w-5 h-5 bg-${accentColor} rounded-full border-2 border-military-900 shadow-lg"></div>
+                                <img src="${p.avatar || 'https://ui-avatars.com/api/?name=' + p.name + '&background=1f2937&color=fff'}" class="w-16 h-16 rounded-2xl border-2 border-military-700 shadow-xl object-cover">
+                                <div class="absolute -top-1 -right-1 w-4 h-4 bg-${accentColor} rounded-full border-2 border-military-900 shadow-lg"></div>
                             </div>
 
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <h3 class="text-xl font-black text-white truncate uppercase tracking-tighter">${p.name}</h3>
-                                    ${p.isStaff ? '<span class="bg-red-600 text-[9px] font-black px-2 py-0.5 rounded text-white shadow-lg">STAFF</span>' : ''}
+                                    <h3 class="text-lg font-black text-white truncate uppercase tracking-tighter">${p.name}</h3>
+                                    ${p.isStaff ? '<span class="bg-red-600 text-[8px] font-black px-1.5 py-0.5 rounded text-white shadow-lg">STAFF</span>' : ''}
                                 </div>
-                                <div class="flex flex-col mt-1">
-                                    <span class="text-sm font-black text-gray-300 uppercase tracking-widest italic">${p.currentGrade}</span>
-                                    <div class="flex items-center gap-2 mt-1">
+                                <div class="flex flex-col mt-0.5">
+                                    <span class="text-xs font-black text-gray-300 uppercase tracking-widest italic">${p.currentGrade}</span>
+                                    <div class="flex items-center gap-1.5 mt-1">
                                         <i data-lucide="at-sign" class="w-3 h-3 text-military-accent"></i>
-                                        <span class="text-[10px] font-bold text-military-accent uppercase tracking-wider">${p.username || 'Inconnu'}</span>
+                                        <span class="text-[9px] font-bold text-military-accent uppercase tracking-wider">${p.username || 'Inconnu'}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- LIGNE 2 : INFOS REGISTRE -->
-                        <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="grid grid-cols-2 gap-3 mt-1">
                             <div class="bg-black/40 p-2 rounded-xl border border-white/5 shadow-inner">
                                 <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-1">Date d'arrivée</p>
                                 <p class="text-[11px] font-black text-white">${p.joinedAt}</p>
@@ -285,12 +280,15 @@
                             </div>
                         </div>
 
-                        <!-- LIGNE 3 : VERDICT -->
-                        <div class="mt-2 flex items-center justify-between bg-black/40 px-3 py-2 rounded-xl border border-white/5">
-                            <span class="text-[10px] font-black ${complianceColor} uppercase tracking-tighter ${glowClass}">
-                                ${complianceText}
-                            </span>
-                            <span class="text-[10px] font-black text-white uppercase tracking-widest bg-${accentColor}/20 px-2 py-0.5 rounded border border-${accentColor}/30">
+                        <!-- LIGNE 3 : VERDICT AVEC ICONE -->
+                        <div class="mt-1 flex items-center justify-between bg-black/40 px-3 py-2.5 rounded-xl border border-white/5">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="${icon}" class="text-${accentColor} w-5 h-5 ${glowClass}"></i>
+                                <span class="text-[10px] font-black ${complianceColor} uppercase tracking-tighter ${glowClass}">
+                                    ${complianceText}
+                                </span>
+                            </div>
+                            <span class="text-[9px] font-black text-white uppercase tracking-widest bg-${accentColor}/20 px-2 py-1 rounded border border-${accentColor}/30">
                                 ${statusText}
                             </span>
                         </div>

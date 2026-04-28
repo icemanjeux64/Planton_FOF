@@ -1,10 +1,10 @@
-﻿            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby97xRyQK-MWPIbjjaHMWXnyE-LpMHKReV2Tq2pWkhNNaJiqToE_dja-YbfEqXhx8Ql/exec";
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby97xRyQK-MWPIbjjaHMWXnyE-LpMHKReV2Tq2pWkhNNaJiqToE_dja-YbfEqXhx8Ql/exec";
             let currentPseudo = "";
 
             // ─── API ─────────────────────────────────────────────────────
-            async function callAPI(action, payload = {}) {
+            async function callAPI(action, payload = {}, silent = false) {
                 const loaderEl = document.getElementById('loader');
-                if (loaderEl) loaderEl.style.display = 'flex';
+                if (loaderEl && !silent) loaderEl.style.display = 'flex';
                 try {
                     const r = await fetch(SCRIPT_URL, {
                         method: 'POST',
@@ -16,10 +16,10 @@
                     if (res.status === "error") throw new Error(res.message);
                     return res.data;
                 } catch (e) {
-                    showToast("ERREUR : " + e.message, "err");
+                    if (!silent) showToast("ERREUR : " + e.message, "err");
                     throw e;
                 } finally {
-                    if (loaderEl) loaderEl.style.display = 'none';
+                    if (loaderEl && !silent) loaderEl.style.display = 'none';
                 }
             }
 
@@ -43,6 +43,7 @@
                         document.getElementById('loginView').classList.add('hidden');
                         document.getElementById('mainView').classList.remove('hidden');
                         showToast('✓ SESSION ACTIVE — ' + currentPseudo, 'ok');
+                        syncEffectifs();
                         return;
                     }
                 } catch (e) {
@@ -122,6 +123,7 @@
                     document.getElementById('mainView').classList.remove('hidden');
 
                     showToast("✓ PRISE DE SERVICE — " + currentPseudo, "ok");
+                    syncEffectifs();
                 } catch (e) {
                     currentPseudo = "";
                 }
@@ -150,6 +152,21 @@
                     showToast("✓ EFFECTIFS — " + count + " PERS.", "ok");
                 } catch (e) { }
             }
+
+            async function syncEffectifs() {
+                if (!currentPseudo) return;
+                try {
+                    const data = await callAPI('getEffectifs', {}, true); // true = mode silencieux
+                    if (data && data.count !== undefined) {
+                        document.getElementById('countInput').value = data.count;
+                    }
+                } catch (e) {
+                    // Échec vraiment silencieux maintenant
+                }
+            }
+
+            // Synchronisation des effectifs toutes les 30 secondes
+            setInterval(syncEffectifs, 30000);
 
             // ─── RECRUTEMENT ─────────────────────────────────────────────
             async function sendRecrutement() {
